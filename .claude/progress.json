@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "project": "coding-language-learning",
+  "updated": "2026-07-17",
+  "milestones": [
+    {
+      "id": "M1",
+      "title": "HTML & CSS track",
+      "steps": [
+        { "title": "Read chapters 1-7 (HTML + CSS fundamentals)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 8-14 (layout, responsive, advanced)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M2",
+      "title": "JavaScript track",
+      "steps": [
+        { "title": "Read chapters 1-9 (language fundamentals)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 10-18 (DOM, async, modules, advanced)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M3",
+      "title": "Python track",
+      "steps": [
+        { "title": "Read chapters 1-9 (language fundamentals)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 10-18 (OOP, APIs, testing, Flask)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M4",
+      "title": "TypeScript track",
+      "steps": [
+        { "title": "Read chapters 1-6 (types, interfaces, narrowing)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 7-12 (generics, utility types, tooling)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    }
+  ]
+}
