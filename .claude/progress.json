@@ -1,7 +1,7 @@
 {
   "version": 1,
   "project": "coding-language-learning",
-  "updated": "2026-07-17",
+  "updated": "2026-07-18",
   "milestones": [
     {
       "id": "M1",
@@ -9,12 +9,30 @@
       "steps": [
         { "title": "Read chapters 1-7 (HTML + CSS fundamentals)", "done": false },
         { "title": "Complete first half of projects", "done": false },
-        { "title": "Read chapters 8-14 (layout, responsive, advanced)", "done": false },
+        { "title": "Read chapters 8-15 (layout, responsive, advanced)", "done": false },
         { "title": "Complete remaining projects incl. capstone", "done": false }
       ]
     },
     {
       "id": "M2",
+      "title": "Git & GitHub track",
+      "steps": [
+        { "title": "Read chapters 1-5 (commits, history, branching)", "done": false },
+        { "title": "Read chapters 6-10 (conflicts, PRs, recovery)", "done": false },
+        { "title": "Complete all practice drills incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M3",
+      "title": "Command line track",
+      "steps": [
+        { "title": "Read chapters 1-5 (navigation, files, pipeline)", "done": false },
+        { "title": "Read chapters 6-10 (env, scripting, automation)", "done": false },
+        { "title": "Complete all drills incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M4",
       "title": "JavaScript track",
       "steps": [
         { "title": "Read chapters 1-9 (language fundamentals)", "done": false },
@@ -24,7 +42,16 @@
       ]
     },
     {
-      "id": "M3",
+      "id": "M5",
+      "title": "How the Web Works track",
+      "steps": [
+        { "title": "Read chapters 1-5 (internet, DNS, HTTP)", "done": false },
+        { "title": "Read chapters 6-10 (browsers, state, APIs, hosting)", "done": false },
+        { "title": "Complete all investigations incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M6",
       "title": "Python track",
       "steps": [
         { "title": "Read chapters 1-9 (language fundamentals)", "done": false },
@@ -34,12 +61,81 @@
       ]
     },
     {
-      "id": "M4",
+      "id": "M7",
       "title": "TypeScript track",
       "steps": [
         { "title": "Read chapters 1-6 (types, interfaces, narrowing)", "done": false },
         { "title": "Complete first half of projects", "done": false },
         { "title": "Read chapters 7-12 (generics, utility types, tooling)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M8",
+      "title": "SQL track",
+      "steps": [
+        { "title": "Read chapters 1-8 (queries, joins, aggregation)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 9-16 (design, performance, SQL from code)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M9",
+      "title": "Testing, Debugging & Security track",
+      "steps": [
+        { "title": "Read chapters 1-6 (testing)", "done": false },
+        { "title": "Read chapters 7-12 (debugging, security)", "done": false },
+        { "title": "Complete all projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M10",
+      "title": "React track",
+      "steps": [
+        { "title": "Read chapters 1-7 (components, state, effects)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 8-14 (hooks, routing, performance)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M11",
+      "title": "Data Structures & Algorithms track",
+      "steps": [
+        { "title": "Read chapters 1-7 (Big-O through sorting)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 8-14 (trees, graphs, DP, interviews)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M12",
+      "title": "Java track",
+      "steps": [
+        { "title": "Read chapters 1-9 (fundamentals through OOP)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 10-18 (collections, streams, testing, Maven)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M13",
+      "title": "C# track",
+      "steps": [
+        { "title": "Read chapters 1-9 (fundamentals through OOP)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 10-18 (LINQ, async, testing, ASP.NET)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M14",
+      "title": "Rust track",
+      "steps": [
+        { "title": "Read chapters 1-8 (ownership through pattern matching)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 9-16 (traits, lifetimes, concurrency)", "done": false },
         { "title": "Complete remaining projects incl. capstone", "done": false }
       ]
     }

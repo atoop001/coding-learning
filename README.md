@@ -1,26 +1,55 @@
 # Coding Language Learning Workspace
 
-A self-paced workspace for learning programming languages, aimed at web development
-and career readiness. Each language has its own folder with two subfolders:
+A self-paced workspace for learning programming languages and core developer
+skills, aimed at web development and career readiness. Each track has its own
+folder with two subfolders:
 
 - **`learning-docs/`** — numbered chapters ordered beginner → advanced. Each chapter
   has thorough definitions, plain-English explanations, runnable code examples,
   common pitfalls, and practice exercises.
 - **`projects/`** — numbered guided project specs, ordered by difficulty. Each spec
-  bundles several chapters together and gives you a description, requirements
-  checklist, hints, and stretch goals — **no solution code**. You write everything.
+  bundles several chapters and gives you a description, requirements checklist,
+  hints, and stretch goals — **no solution code**. You write everything.
+
+## Tracks
+
+**Languages**
+
+| Track | What it's for |
+|-------|---------------|
+| `html-css/` | Structure and styling of every web page |
+| `javascript/` | The core language of the web |
+| `typescript/` | Professional typed JavaScript (learn after JS) |
+| `python/` | Back-end web, automation, data, careers |
+| `sql/` | Databases — storing and querying real data |
+| `java/` | Enterprise back-ends, Android, big-company jobs |
+| `csharp/` | .NET web, Windows apps, Unity (alternative to Java) |
+| `rust/` | Systems programming — the advanced challenge track |
+
+**Developer skills**
+
+| Track | What it's for |
+|-------|---------------|
+| `git-github/` | Version control and the professional PR workflow |
+| `command-line/` | Terminal fluency (PowerShell + Bash) |
+| `how-the-web-works/` | HTTP, DNS, APIs — what actually happens between browser and server |
+| `data-structures-algorithms/` | Efficiency, problem-solving, interview prep |
+| `react/` | The most in-demand front-end framework (after JS + TS) |
+| `testing-debugging-security/` | Professional quality habits for every language |
 
 ## Recommended Learning Path
 
-1. **`html-css/`** — start here. Every web page is built on HTML and CSS, and it's
-   the fastest way to see visible results.
-2. **`javascript/`** — the core language of the web. Start once you're comfortable
-   building static pages.
-3. **`python/`** — can run *alongside* JavaScript. Seeing the same concepts
-   (variables, loops, functions) in two languages reinforces them. Also your route
-   into back-end web development.
-4. **`typescript/`** — last. It builds directly on JavaScript, so finish the JS
-   track (or most of it) first.
+1. **Foundations** — `html-css/`, with `git-github/` and `command-line/` alongside
+   (both pay off immediately and apply to everything).
+2. **Core programming** — `javascript/`, with `how-the-web-works/` alongside.
+   `python/` can also run in parallel; seeing the same concepts in two languages
+   reinforces them.
+3. **Professional web dev** — `typescript/`, then `sql/`, with
+   `testing-debugging-security/` alongside.
+4. **Specialize** — `react/` (front-end jobs) and `data-structures-algorithms/`
+   (interview prep).
+5. **Broaden** — `java/` **or** `csharp/` (they teach similar concepts — pick one
+   first), and finally `rust/`, the hardest track, once you're confident.
 
 ## How to Use This Workspace
 
@@ -28,15 +57,18 @@ and career readiness. Each language has its own folder with two subfolders:
    practice exercises.
 2. When you reach a project whose "Chapters used" you've covered, build it. Work
    through the requirements checklist top to bottom; use hints only when stuck.
-3. Keep your project code in the language's `projects/` folder (e.g.,
+3. Keep your project code in the track's `projects/` folder (e.g.,
    `javascript/projects/03-todo-app/` next to the spec).
 4. Each track's `README.md` lists its chapters and projects in order with a
    suggested cadence.
 
-## Adding More Languages
+## Syncing Across Devices
 
-Ask Claude to add a new track (e.g., "add a Go track") — it will follow the same
-structure: `<language>/learning-docs/` + `<language>/projects/`.
+This workspace lives at `https://github.com/atoop001/coding-learning`.
+
+- Start each session: `rtk git pull`
+- End each session: `rtk git add . && rtk git commit -m "what you did" && rtk git push`
+- New device: `git clone https://github.com/atoop001/coding-learning.git`
 
 ## Progress
 
