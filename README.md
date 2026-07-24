@@ -35,7 +35,9 @@ folder with two subfolders:
 | `how-the-web-works/` | HTTP, DNS, APIs — what actually happens between browser and server |
 | `data-structures-algorithms/` | Efficiency, problem-solving, interview prep |
 | `react/` | The most in-demand front-end framework (after JS + TS) |
+| `node-express/` | Back-end JavaScript — build real APIs with Node.js + Express |
 | `testing-debugging-security/` | Professional quality habits for every language |
+| `deployment-devops/` | Docker, CI/CD, and cloud — shipping projects to real URLs |
 
 ## Recommended Learning Path
 
@@ -44,10 +46,12 @@ folder with two subfolders:
 2. **Core programming** — `javascript/`, with `how-the-web-works/` alongside.
    `python/` can also run in parallel; seeing the same concepts in two languages
    reinforces them.
-3. **Professional web dev** — `typescript/`, then `sql/`, with
-   `testing-debugging-security/` alongside.
-4. **Specialize** — `react/` (front-end jobs) and `data-structures-algorithms/`
-   (interview prep).
+3. **Professional web dev** — `typescript/`, then `sql/` and `node-express/`
+   (back-end JS builds directly on both), with `testing-debugging-security/`
+   alongside.
+4. **Specialize & ship** — `react/` (front-end jobs),
+   `deployment-devops/` (put your projects on real URLs — now a baseline hiring
+   expectation), and `data-structures-algorithms/` (interview prep).
 5. **Broaden** — `java/` **or** `csharp/` (they teach similar concepts — pick one
    first), and finally `rust/`, the hardest track, once you're confident.
 

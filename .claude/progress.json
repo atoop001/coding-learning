@@ -1,7 +1,7 @@
 {
   "version": 1,
   "project": "coding-language-learning",
-  "updated": "2026-07-18",
+  "updated": "2026-07-24",
   "milestones": [
     {
       "id": "M1",
@@ -81,6 +81,16 @@
       ]
     },
     {
+      "id": "M15",
+      "title": "Node.js & Express track",
+      "steps": [
+        { "title": "Read chapters 1-7 (Node, npm, HTTP, Express, REST)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 8-14 (DB, auth, testing, production)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
       "id": "M9",
       "title": "Testing, Debugging & Security track",
       "steps": [
@@ -96,6 +106,16 @@
         { "title": "Read chapters 1-7 (components, state, effects)", "done": false },
         { "title": "Complete first half of projects", "done": false },
         { "title": "Read chapters 8-14 (hooks, routing, performance)", "done": false },
+        { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M16",
+      "title": "Deployment & DevOps track",
+      "steps": [
+        { "title": "Read chapters 1-6 (servers, secrets, Docker, Compose)", "done": false },
+        { "title": "Complete first half of projects", "done": false },
+        { "title": "Read chapters 7-12 (CI/CD, cloud, monitoring, DNS)", "done": false },
         { "title": "Complete remaining projects incl. capstone", "done": false }
       ]
     },
