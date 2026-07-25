@@ -158,6 +158,18 @@
         { "title": "Read chapters 9-16 (traits, lifetimes, concurrency)", "done": false },
         { "title": "Complete remaining projects incl. capstone", "done": false }
       ]
+    },
+    {
+      "id": "M17",
+      "title": "Capstones",
+      "steps": [
+        { "title": "Ship Capstone 2: Portfolio & Blog", "done": false },
+        { "title": "Ship Capstone 3: Progress Dashboard v1", "done": false },
+        { "title": "Ship Capstone 1: Tutoring Business Platform", "done": false },
+        { "title": "Capstone 4: 3 merged open-source PRs", "done": false },
+        { "title": "Ship Capstone 5 or 6 (Public API / Data Pipeline)", "done": false },
+        { "title": "Ship Capstone 7: Same App, Twice", "done": false }
+      ]
     }
   ]
 }

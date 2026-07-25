@@ -39,6 +39,14 @@ folder with two subfolders:
 | `testing-debugging-security/` | Professional quality habits for every language |
 | `deployment-devops/` | Docker, CI/CD, and cloud — shipping projects to real URLs |
 
+**Capstones**
+
+The `capstones/` folder holds 7 large cross-track project specs — finished,
+shareable, portfolio-grade builds (a real business app, a public API, a data
+pipeline, open-source contributions, and more). See `capstones/README.md` for
+the list and suggested order. Start the first one (Portfolio & Blog) once you've
+finished the node-express track's database and auth chapters.
+
 ## Recommended Learning Path
 
 1. **Foundations** — `html-css/`, with `git-github/` and `command-line/` alongside
