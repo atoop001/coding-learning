@@ -72,7 +72,7 @@ interface BoardState {
 }
 
 type BoardAction =
-  | { type: 'task_added'; title: string }
+  | { type: 'task_added'; id: string; title: string }
   | { type: 'task_moved'; id: string; to: Task['column'] }
   | { type: 'task_removed'; id: string }
   | { type: 'filter_changed'; filter: string }
@@ -80,14 +80,14 @@ type BoardAction =
 
 const initialState: BoardState = { tasks: [], filter: '' };
 
-// Pure function: no fetches, no Date.now()/random ideally passed in via action,
+// Pure function: no fetches, no Date.now()/crypto.randomUUID() calls,
 // no mutation — always return new objects for changed parts.
 function boardReducer(state: BoardState, action: BoardAction): BoardState {
   switch (action.type) {
     case 'task_added': {
       const title = action.title.trim();
       if (!title) return state; // invariant enforced in ONE place
-      const task: Task = { id: crypto.randomUUID(), title, column: 'todo' };
+      const task: Task = { id: action.id, title, column: 'todo' };
       return { ...state, tasks: [...state.tasks, task] };
     }
     case 'task_moved':
@@ -124,7 +124,7 @@ function Board() {
         value={state.filter}
         onChange={e => dispatch({ type: 'filter_changed', filter: e.currentTarget.value })}
       />
-      <button onClick={() => dispatch({ type: 'task_added', title: 'New task' })}>Add</button>
+      <button onClick={() => dispatch({ type: 'task_added', id: crypto.randomUUID(), title: 'New task' })}>Add</button>
 
       {(['todo', 'doing', 'done'] as const).map(col => (
         <section key={col}>
@@ -156,14 +156,14 @@ import { describe, expect, it } from 'vitest';
 
 describe('boardReducer', () => {
   it('trims titles and rejects empty ones', () => {
-    const s1 = boardReducer(initialState, { type: 'task_added', title: '  hi  ' });
+    const s1 = boardReducer(initialState, { type: 'task_added', id: 'id-1', title: '  hi  ' });
     expect(s1.tasks[0].title).toBe('hi');
-    const s2 = boardReducer(initialState, { type: 'task_added', title: '   ' });
+    const s2 = boardReducer(initialState, { type: 'task_added', id: 'id-2', title: '   ' });
     expect(s2).toBe(initialState); // same reference: nothing changed
   });
 
   it('moves the right task', () => {
-    const s1 = boardReducer(initialState, { type: 'task_added', title: 'a' });
+    const s1 = boardReducer(initialState, { type: 'task_added', id: 'id-1', title: 'a' });
     const s2 = boardReducer(s1, { type: 'task_moved', id: s1.tasks[0].id, to: 'done' });
     expect(s2.tasks[0].column).toBe('done');
   });
@@ -226,7 +226,7 @@ const [state, dispatch] = useReducer(
 
 1. **Mutating state inside the reducer.** `state.tasks.push(task); return state;` returns the same reference — React sees "no change" and skips the re-render. Reducers obey exactly the same immutability rules as `useState`.
 
-2. **Side effects in the reducer.** Fetching, `localStorage.setItem`, dispatching other actions, or even `new Date()` inside a reducer breaks purity (and misbehaves under StrictMode's double-invoke). Effects go in `useEffect`/handlers; nondeterminism (ids, timestamps) is fine at *dispatch time*, passed in the action payload — the id example above bends this rule; putting `crypto.randomUUID()` in the action payload is the stricter habit.
+2. **Side effects in the reducer.** Fetching, `localStorage.setItem`, dispatching other actions, or even `new Date()`/`crypto.randomUUID()` inside a reducer breaks purity. A pure reducer must return the same output for the same input every time — that's exactly why `task_added` above takes `id` as part of the action instead of generating one internally. Two things depend on that purity: **replay** (undo/redo and time-travel debugging replay actions through the reducer — a reducer that mints a new id or timestamp on each call produces different state on replay than it did the first time) and **StrictMode's double-invoke** (React deliberately calls reducers twice in development; a `crypto.randomUUID()` call inside the reducer runs twice and the second id is silently discarded, masking the bug in dev while it lurks for production). Generate ids/timestamps at *dispatch time* — in the event handler, right where the action is created — and pass them in the payload, as `id: crypto.randomUUID()` does in the `Add` button's `onClick` above. The reducer then stays a deterministic function of `(state, action)` and the messy, nondeterministic real world stays in handlers/effects.
 
 3. **Setter-shaped actions.** `{ type: 'set_tasks', tasks }` recreates `useState` with extra steps and moves logic back into components. Actions describe *events* (`'task_added'`); the reducer decides state changes.
 

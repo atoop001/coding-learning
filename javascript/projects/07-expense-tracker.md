@@ -21,7 +21,7 @@ Because you're using modules, run the project through a local server (`npx serve
 - `07-arrays-and-array-methods.md` — filtering, sorting, `reduce` for summaries
 - `08-objects.md` — immutability discipline, serialization shapes
 - `10-dom-manipulation.md` + `11-events.md` — the UI layer
-- `18-modern-js-and-tooling.md` — destructuring, spread, `??` throughout
+- `18-modern-js-and-tooling.md` (only the destructuring/spread/`??` sections — previewed already in Chapters 8 and 13; the full chapter comes later, before Project 8)
 
 ## Requirements Checklist
 

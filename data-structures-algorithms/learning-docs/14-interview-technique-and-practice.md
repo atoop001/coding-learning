@@ -48,6 +48,7 @@ Compressed from Chapters 5–13 — this table should feel like an index into th
 | Ordering with dependencies | Topological sort | 11 |
 | Count ways / min cost / longest sequence with choices | DP — define the state first | 13 |
 | Hierarchical / sorted-order / range queries | Tree, BST | 9 |
+| Prefix search / autocomplete over many strings | Trie | 9 |
 | O(1) ops at a specific position you hold | Linked list | 3 |
 
 When lost: (a) sort the input mentally and see what opens up; (b) ask "what would I precompute into a hash map?"; (c) solve size-3 by hand and generalize; (d) say your dead-end aloud — interviewers steer talkers, not statues.

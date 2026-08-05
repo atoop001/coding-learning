@@ -36,7 +36,7 @@ In JavaScript, errors like calling a function that doesn't exist blow up *at run
 
 ### LTS versions
 
-Java releases a new version every six months, but **LTS (Long-Term Support)** versions are what companies use: Java 8, 11, 17, 21. Install the newest LTS (21 or later). Everything in this track works on Java 17+.
+Java releases a new version every six months, but **LTS (Long-Term Support)** versions are what companies use: 8, 11, 17, 21, and 25 are LTS releases, with 21 and 25 the current ones in active enterprise use as of this writing. Check adoptium.net for whichever is newest when you read this, and install the newest LTS available. Everything in this track works on Java 17+.
 
 ## Installing the JDK on Windows
 

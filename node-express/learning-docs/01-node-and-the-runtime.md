@@ -14,7 +14,7 @@ Everything you've written in the JavaScript track so far ran inside a browser (o
 
 - **Server-side JavaScript** — JavaScript that runs on a machine you control (your laptop during development, a rented server in production) instead of inside a visitor's browser. Server code can do things browser code must never be allowed to do: read arbitrary files, talk to databases directly, hold secrets.
 
-- **LTS (Long-Term Support)** — Node releases in even-numbered major versions designated for long-term maintenance (Node 22 is the current LTS as this track assumes). Production apps and this entire track use LTS. Odd-numbered versions are short-lived experiments; skip them.
+- **LTS (Long-Term Support)** — Node releases in even-numbered major versions designated for long-term maintenance; check nodejs.org for the current LTS (this track assumes it and was written against Node 22+). Production apps and this entire track use LTS. Odd-numbered versions are short-lived experiments; skip them.
 
 - **nvm-windows** — a *Node version manager* for Windows. Instead of installing Node once, globally, forever, you install nvm-windows and let it install and switch between Node versions. Real jobs involve multiple projects pinned to different Node versions; a version manager is how professionals handle that.
 

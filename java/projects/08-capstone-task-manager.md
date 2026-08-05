@@ -10,7 +10,7 @@ The graduation project: a complete, polished console task-management application
 
 ## Chapters used
 
-All of them. Centrally: 18 (Maven, JARs), 17 (JUnit), 16 (persistence), 15 (streams for queries), 14 (error handling), 10–13 (design: interfaces, collections, generics), 11 (packages).
+All of them. Centrally: 18 (Maven, JARs), 17 (JUnit), 16 (persistence, `java.time` due dates), 15 (streams for queries), 14 (error handling), 10–13 (design: interfaces, `enum` for `Priority`, collections, generics), 11 (packages).
 
 ## Requirements checklist
 

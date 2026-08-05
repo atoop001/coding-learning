@@ -36,7 +36,7 @@ Every chapter contains: Overview, Definitions & explanations, runnable commented
 ## Projects (easiest → hardest)
 
 1. `projects/01-test-suite-for-a-utility-library.md` — write a professional test suite for a small spec'd utility library, in pytest *and* Vitest. *(Ch. 1, 2, 4)*
-2. `projects/02-test-first-text-processing-module.md` — build a Markdown-lite converter strictly test-first. *(Ch. 2, 3, 4, 7)*
+2. `projects/02-test-first-text-processing-module.md` — build a Markdown-lite converter strictly test-first. *(Ch. 2, 3, 4)*
 3. `projects/03-debugging-gauntlet.md` — build a bug-prone Grade Book fast, then hunt and regression-test every bug systematically. *(Ch. 4, 7, 8, 9)*
 4. `projects/04-mock-based-api-client-testing.md` — build & test a weather API client entirely with doubles; no network in the unit suite. *(Ch. 3, 4, 5, 6)*
 5. `projects/05-security-audit-of-an-earlier-project.md` — threat-model, audit, and harden one of your own past web apps. *(Ch. 6, 9, 10, 11, 12)*

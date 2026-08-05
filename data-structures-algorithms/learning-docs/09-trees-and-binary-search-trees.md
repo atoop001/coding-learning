@@ -73,6 +73,26 @@ For the tree at the top: in-order = 1 3 4 6 7 8 10 13 14 (sorted!), pre-order = 
 
 Rule: exact lookups only → hash. Anything about *order* → tree.
 
+### Tries: the prefix tree
+
+A **trie** (pronounced "try", from re**trie**val) is a tree shaped by the *characters of your keys* rather than by comparisons between whole keys. Each edge is labeled with one character; the path from the root spells out a string. There's no ordering property to maintain like a BST — a node's position is dictated entirely by which characters got you there.
+
+Vocabulary:
+
+- **Node** — holds a **children map** (character → child node; a dict works fine) and nothing else structural.
+- **End-of-word marker** — a boolean flag on a node meaning "a real key ends here," not just "a key passes through here." Without it you can't tell a stored word from a mere prefix of a longer one (see pitfalls).
+- **Prefix path** — walking `t`, `r`, `i` from the root lands you on the node representing `"tri"`, whether or not `"tri"` itself was ever inserted.
+
+Why reach for a trie instead of a hash map, sorted list, or BST when the job is *prefix* queries — "give me every stored word starting with `pre`"?
+
+| Operation (key length L, n stored keys, m matches) | Hash map | Balanced BST | Trie |
+|---|---|---|---|
+| insert | O(L) avg | O(L log n) | O(L) |
+| exact lookup | O(L) avg | O(L log n) | O(L) |
+| prefix search | O(n·L) — must scan every key | O(log n + m·L) with a pruned range walk | **O(L + m)** |
+
+The trie's prefix search cost doesn't depend on how many keys are stored at all — only on the prefix length and how many results come back. A hash map can't do it better than a full scan (hashing destroys prefix locality), and even a BST's pruned range walk still pays for tree height. That locality — "every key sharing a prefix shares a path" — is the trie's entire reason to exist.
+
 ## Code Examples
 
 ```python
@@ -229,6 +249,41 @@ function inOrder(node, out = []) {
 }
 ```
 
+A minimal trie, built from plain nested dicts — no node class required, just to show the *shape* of the idea:
+
+```python
+# tiny_trie.py — illustrative only. A real trie (with frequencies,
+# deletion, and a completion collector) is Project 5's job, not this one.
+
+END = "$"   # sentinel key: real words won't contain "$", so it's a safe marker
+
+def add_word(trie, word):
+    """Walk/create one node per character; O(len(word))."""
+    node = trie
+    for ch in word:
+        node = node.setdefault(ch, {})
+    node[END] = True                       # mark: a real word ends HERE
+
+def has_prefix(trie, prefix):
+    """True if some stored word starts with prefix. O(len(prefix)) —
+    doesn't matter if 10 or 10 million words are stored."""
+    node = trie
+    for ch in prefix:
+        if ch not in node:
+            return False
+        node = node[ch]
+    return True
+
+
+if __name__ == "__main__":
+    words = {}
+    for w in ["car", "cart", "card", "care", "dog"]:
+        add_word(words, w)
+    print(has_prefix(words, "ca"))     # True
+    print(has_prefix(words, "cat"))    # False — no stored word starts this way
+    print(has_prefix(words, "do"))     # True
+```
+
 ## Common Pitfalls
 
 **1. Validating a BST by checking only parent vs children.**
@@ -264,6 +319,8 @@ def is_bst(n, lo=float("-inf"), hi=float("inf")):
 
 **5. Recursion depth on degenerate trees.** A recursive traversal of a 10,000-node degenerate tree blows Python's recursion limit (Chapter 6). The iterative in-order with an explicit stack (exercise 2) is the defense.
 
+**6. Trie: skipping the end-of-word marker.** If `has_prefix`-style path-existence is all you check, a trie containing only `"card"` will report `"car"` as present too — the path for `"car"` genuinely exists, it just doesn't *end* a word there. A correct `contains(word)` must walk the path **and** check the end-of-word flag on the final node; a correct `starts_with(prefix)` deliberately skips that check. Confusing the two is the single most common trie bug.
+
 ## Practice Exercises
 
 1. Add `successor(key)` to `BST`: the smallest key strictly greater than `key`, or None — O(height), no full traversal. Two cases to handle: the node has a right subtree; it doesn't (track the last "turned left" ancestor while descending).
@@ -271,6 +328,8 @@ def is_bst(n, lo=float("-inf"), hi=float("inf")):
 3. Write `from_sorted(a)` that builds a *height-balanced* BST from a sorted list (recursively: middle element becomes the root). Prove to yourself with `height()` that 1,023 sorted values give height 9, not 1,022.
 4. Implement `kth_smallest(k)` two ways: (a) in-order traversal that stops early, (b) augment each node with a `size` field (maintained on insert) enabling O(height) selection. State each version's complexity.
 5. Serialize a BST to a flat list with pre-order traversal and write `deserialize` that reconstructs it *exactly* — using the BST property and min/max bounds instead of storing None markers. Round-trip test on random trees.
+6. Extend `tiny_trie.py` with `remove_word(trie, word)` that clears the end-of-word marker. Then explain in a comment why leftover branch nodes (now marking no word) are *harmless but wasteful* — and what it would take to prune them (hint: post-order thinking, Chapter 6 — a branch is only safe to delete once you know none of its children need it).
+7. Write a proper `contains(trie, word)` for `tiny_trie.py` that returns `True` only when `word` was actually inserted, not merely when it's a prefix of something longer. Write two tests that would fail against a version of `contains` that forgets the end-of-word check — one on `"car"`/`"card"`, one of your own.
 
 ---
 

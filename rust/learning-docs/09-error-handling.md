@@ -19,7 +19,6 @@ Any function that can fail returns `Result`. The signature *is* the documentatio
 
 ```rust
 use std::fs;
-use std::num::ParseIntError;
 
 fn read_port(path: &str) -> Result<u16, String> {
     // fs::read_to_string returns Result<String, std::io::Error>

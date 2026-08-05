@@ -45,7 +45,7 @@ Guided specs with requirement checklists, hints, and stretch goals — **no solu
 | 3 | `03-multi-step-form.md` | Three-step validated wizard — lifted state, controlled components | 4–6 |
 | 4 | `04-kanban-task-board.md` | Kanban board on a typed reducer — actions, invariants, persistence | 7 + 10 |
 | 5 | `05-api-explorer.md` | Paginated/searchable API browser — fetching, races, abort, custom hooks | 7–9 |
-| 6 | `06-themed-multi-page-app.md` | Multi-page notes app — routing, context (theme/toast/auth), URL state | 11–12 |
+| 6 | `06-themed-multi-page-app.md` | Multi-page notes app — routing, context (theme/toast/auth), URL state | 4–12, esp. 6 + 10 |
 | 7 | `07-capstone-study-tracker.md` | Full SPA: routing, API data, context, reducers, tests, **deployed** | 1–14 |
 
 ## Suggested Cadence (~10–12 weeks at 8–10 hrs/week)

@@ -77,6 +77,17 @@ var loaded = JsonSerializer.Deserialize<List<Contact>>(
 
 Note: `JsonSerializer` uses **public properties** (records qualify); private fields are ignored.
 
+By default an `enum` property serializes as its underlying number (e.g. `1`), which is unreadable over the wire. Add a `JsonStringEnumConverter` to the options to serialize (and accept) enums as their name instead:
+
+```csharp
+enum Status { Wishlist, Reading, Finished }
+record Book(string Title, Status Status);
+
+var options = new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } };
+string json = JsonSerializer.Serialize(new Book("Dune", Status.Reading), options);
+// {"Title":"Dune","Status":"Reading"}  <- not "Status":1
+```
+
 ### Async/await — the 80% you need now
 
 Reading a large file or calling a web API takes time. A **synchronous** call blocks the thread until done. An **`async` method returns a `Task`** — a promise of a future result (JS: literally `Promise`) — and **`await`** pauses *this method* (not the whole program) until the task completes:

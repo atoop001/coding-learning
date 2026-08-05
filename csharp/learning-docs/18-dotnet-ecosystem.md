@@ -97,6 +97,33 @@ curl -X DELETE http://localhost:5000/tasks/2
 
 Notice how much you already understand: records, LINQ (`FirstOrDefault`, `Max`), lambdas, pattern matching, generic lists — a web API is your existing skills plus routing.
 
+### Dependency Injection in ASP.NET Core
+
+You built interface habits in Chapter 10 for a reason: ASP.NET Core has a **dependency injection (DI) container** built in, and it expects you to program against interfaces. Instead of a class `new`-ing up the things it depends on, you **register** implementations with the builder, and the framework hands them to whatever asks for them — including minimal-API handlers, as plain parameters.
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Register: "when something asks for IGreeter, give it a Greeter"
+builder.Services.AddSingleton<IGreeter, Greeter>();
+
+var app = builder.Build();
+
+// The container sees the IGreeter parameter and injects it automatically —
+// no "new Greeter()" anywhere in the handler
+app.MapGet("/hello", (IGreeter greeter) => greeter.Greet());
+
+app.Run();
+
+interface IGreeter { string Greet(); }
+class Greeter : IGreeter
+{
+    public string Greet() => "Hello from the DI container!";
+}
+```
+
+Registration methods control **lifetime** — how long an instance lives before a new one is created. At an awareness level: `AddSingleton` creates one instance for the whole app's lifetime (good for stateless services or shared in-memory data, as in the capstone); `AddScoped` creates one instance per HTTP request (common once a database is involved); `AddTransient` creates a new instance every time it's requested (for cheap, stateless helpers). You'll default to `AddSingleton` for this track's projects and meet `AddScoped` once EF Core enters the picture.
+
 ### Where C# is used — picking your lane
 
 | Domain | Tech | Notes |
@@ -158,6 +185,8 @@ Console.WriteLine($"[{env}] data at {Path.GetFullPath(dataDir)}");
 **4. Grabbing unmaintained packages.** Before adopting a package check downloads, last update, and license on nuget.org. Prefer packages from known publishers; every dependency is code you now effectively own.
 
 **5. Tutorial paralysis.** The ecosystem is huge — Blazor! MAUI! Unity! — and it's tempting to sample everything shallowly. Employability comes from depth in one lane (recommendation: web APIs) with breadth added later.
+
+**6. Manually `new`-ing a service instead of letting the container inject it.** `app.MapGet("/hello", () => new Greeter().Greet())` works, but it bypasses DI entirely — you lose the ability to swap implementations (e.g. a fake for tests) and any lifetime management the container would have given you. If a service is registered with `builder.Services`, take it as a handler parameter and let the container supply it.
 
 ## Practice Exercises
 

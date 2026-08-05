@@ -49,8 +49,8 @@ This is your first full HTML + CSS project: the form itself exercises Chapter 5;
 - Default `fieldset` borders look dated — you can restyle or remove the border while *keeping* the fieldset/legend for accessibility.
 - The "label above input" pattern is easiest: make labels `display: block` with a small bottom margin.
 - If your inputs overflow the card when set to `width: 100%`, revisit `box-sizing` — that's the classic Chapter 7 pitfall.
-- Test the tab order by keyboard: tab through the entire form and watch your focus styles.
-- Try submitting every invalid state on purpose; adjust `title` attributes until every browser message would make sense to your grandmother.
+- Test the tab order by keyboard: tab through the entire form and watch your focus styles. `:focus-visible` (Chapter 6, pseudo-classes) is the better choice here — it skips the ring on mouse clicks and shows it for keyboard users.
+- Try submitting every invalid state on purpose; adjust `title` attributes until every browser message would make sense to your grandmother. Use `:user-invalid` (Chapter 6, pseudo-classes) instead of `:invalid` if you don't want required fields turning red before the user has touched them.
 
 ## Stretch Goals
 

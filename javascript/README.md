@@ -53,7 +53,7 @@ Assuming ~5–8 focused hours per week (adjust freely — the checkpoints matter
 | 4. Robustness | Chapter 12 | **Project 4** — Quiz app | Week 8 |
 | 5. Deeper functions | Chapter 13 | **Project 5** — Form validator | Weeks 9–10 |
 | 6. Async & APIs | Chapters 15–16 (yes, before 14 is fine — or read 14 first, either order works after 13) | **Project 6** — Weather dashboard | Weeks 11–12 |
-| 7. Structure | Chapters 14, 17 | **Project 7** — Expense tracker | Weeks 13–14 |
+| 7. Structure | Chapters 14, 17 (plus the destructuring/spread/`??` sections of 18, already previewed in Chapters 8 & 13 — the rest of 18 comes next) | **Project 7** — Expense tracker | Weeks 13–14 |
 | 8. Polish & capstone | Chapter 18 | **Project 8** — Recipe Box capstone | Weeks 15–17 |
 
 ## How to work

@@ -26,6 +26,8 @@ Changing User/Machine variables does **not** update already-running terminals �
 
 **Function** — A named block of shell code callable like a command. The right tool for multi-step shortcuts in both shells.
 
+**Execution policy (PowerShell/Windows only)** — A safety gate controlling whether `.ps1` files — including your own profile — are allowed to run at all. Fresh Windows machines often ship with `Restricted`, which silently blocks a freshly created profile from loading along with every other script. Check the current setting with `Get-ExecutionPolicy`; the standard developer fix, no admin required, is `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` — local scripts run freely, internet-downloaded ones must be signed or unblocked first. It's a seatbelt against accidental execution, not a security boundary. Chapter 8 revisits this in full alongside script authoring, but you need it now: if your profile changes in this chapter don't seem to take effect, an unset execution policy is a prime suspect.
+
 ## Command Examples
 
 Inspecting the environment:

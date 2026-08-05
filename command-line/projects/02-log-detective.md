@@ -13,9 +13,8 @@ This is the daily bread of real operations work: on a server, the log file and y
 ## Chapters used
 
 - Chapter 4: Viewing & Searching File Contents (core)
-- Chapter 5: The Pipeline (core)
+- Chapter 5: The Pipeline (core — also covers the generator below: `ForEach-Object` over a range, no scripting required)
 - Chapter 2: Navigation (incidental)
-- Chapter 8: Writing Scripts (only for the generator, and only lightly)
 
 ## Requirements checklist
 
@@ -27,8 +26,42 @@ Work in `D:\atoop\coding-projects\command-line\projects\sandbox\log-detective\`.
       e.g. `2026-07-17 02:14:09 ERROR [db] connection timeout after 30s`
 - [ ] Use at least 4 levels (`INFO`, `WARN`, `ERROR`, `FATAL`) and at least 4 components (e.g. `web`, `db`, `auth`, `cache`)
 - [ ] Build in a deliberate "incident": a time window where ERROR/FATAL lines cluster around one component, with a cause hinted earlier (e.g., WARN lines about the same component before the failures start)
-- [ ] Generate the lines with a loop (a small script or a one-liner is fine — hand-typing 300 lines is not the exercise); some randomness or repetition patterns are welcome
+- [ ] Generate the baseline lines using the provided setup snippet below (tweak the values freely) — it's scaffolding for the exercise, not the skill being tested here; some randomness or repetition patterns are welcome
 - [ ] Do not consult the generator or its source while solving Phase B — investigate the log as if you'd never seen it
+
+**Provided setup snippet** (paste into PowerShell, or tweak the arrays/timestamps first — no scripting knowledge required, it's just a `ForEach-Object` pipeline over a range, straight from Ch. 5):
+
+```powershell
+$levels     = "INFO","WARN","ERROR","FATAL"
+$components = "web","db","auth","cache"
+$messages   = @{
+    INFO  = "request completed","cache hit","session refreshed"
+    WARN  = "slow query detected","retrying connection","cache miss"
+    ERROR = "connection timeout after 30s","query failed","auth token rejected"
+    FATAL = "service unresponsive","out of memory"
+}
+$start = Get-Date "2026-07-17 00:00:00"
+
+# Baseline noise: 280 lines, one every ~15s, level/component/message picked at random
+1..280 | ForEach-Object {
+    $level     = $levels | Get-Random
+    $component = $components | Get-Random
+    $message   = $messages[$level] | Get-Random
+    $timestamp = $start.AddSeconds($_ * 15)
+    "$($timestamp.ToString('yyyy-MM-dd HH:mm:ss')) $level [$component] $message"
+} | Set-Content service.log
+
+# The incident: hand-write one component's failure story (edit freely — make it yours)
+@(
+    "2026-07-17 01:10:00 WARN [db] slow query detected"
+    "2026-07-17 01:12:30 WARN [db] retrying connection"
+    "2026-07-17 01:15:00 ERROR [db] connection timeout after 30s"
+    "2026-07-17 01:15:20 ERROR [db] connection timeout after 30s"
+    "2026-07-17 01:16:05 FATAL [db] service unresponsive"
+) | Add-Content service.log
+```
+
+Change the component, messages, and timestamps in the incident block so it's not identical to this example — that's what keeps Phase B honest.
 
 **Phase B — The investigation brief (answer each with a command; save every command + answer into `case-notes.md` as you go):**
 - [ ] How many lines does the log contain? How many per level?
@@ -51,7 +84,7 @@ Work in `D:\atoop\coding-projects\command-line\projects\sandbox\log-detective\`.
 - For the incident window, remember timestamps in this format sort *alphabetically = chronologically*. Sorting the incidents file gets you both ends cheaply.
 - `Select-String` gives you objects with a `.Line` property — useful when redirected output looks odd (Ch. 4 pitfalls).
 - Case sensitivity defaults differ between `grep` and `Select-String` — decide explicitly, per query, whether case matters.
-- Generator stuck? A loop over a range, a couple of arrays of sample components/messages, and an index picked with `Get-Random` / `$RANDOM` goes a long way. Keep it crude; realism comes from volume.
+- Generator stuck? The provided snippet in Phase A is the whole thing — just edit the arrays and incident block to make it yours. Keep it crude; realism comes from volume.
 
 ## Stretch goals
 

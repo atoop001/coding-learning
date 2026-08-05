@@ -6,6 +6,7 @@ Chapter 9's `Shape.area()` returning `0.0` was a smell: a "generic shape" has no
 
 - **Abstract classes** — partial implementations that cannot be instantiated.
 - **Interfaces** — pure contracts a class promises to fulfill, and Java's answer to multiple inheritance.
+- **Enums** — a fixed, type-safe set of named constants, closely related to both: an enum is a special kind of class, and it can implement interfaces.
 
 Interfaces especially are the backbone of professional Java: `List`, `Comparable`, `Runnable` are all interfaces, and "program to the interface" is the single most-repeated design maxim in enterprise code.
 
@@ -81,6 +82,64 @@ public class Player implements Comparable<Player> {
 ```
 
 **`Runnable`** — "has a `void run()`" — the classic single-method callback, and a preview of lambdas (Chapter 15). Interfaces with exactly one abstract method are called **functional interfaces**.
+
+### Enums — type-safe constants
+
+A plain `int` or `String` "status code" lets you pass `"PENDING"`, `"pending"`, or even `"banana"` and the compiler says nothing — the bug surfaces at runtime, if you're lucky. An `enum` fixes the set of legal values at compile time:
+
+```java
+public enum Status {
+    OPEN, IN_PROGRESS, DONE, CANCELLED
+}
+```
+
+- Each name (`OPEN`, `DONE`, ...) is a compile-time-checked, singleton instance of type `Status` — there is exactly one `Status.OPEN` in the whole JVM.
+- Using it: `Status s = Status.OPEN;` — no quotes, no magic numbers. Passing `Status.DOEN` (typo) is a compile error, not a silent bug.
+- `==` is always safe for enum comparison (unlike `String`, there's only ever one instance per constant).
+
+**Why enums beat `String`/`int` constants**: the compiler rejects invalid values, IDEs autocomplete the legal set, `switch` can be checked for completeness, and `toString()` already gives a sane name — no `if (status == 1) return "pending";` translation tables scattered through the codebase.
+
+**Built-in methods every enum gets for free**:
+
+```java
+Status[] all = Status.values();          // every constant, in declaration order
+Status s = Status.valueOf("DONE");       // String -> enum; throws IllegalArgumentException if no match
+int position = s.ordinal();              // declaration-order index (0-based) — rarely needed, avoid depending on it
+String name = s.name();                  // "DONE" — exact declared name
+```
+
+**Enums in switch** — this is where enums shine, especially with the modern switch *expression* (Chapter 3 covered the statement form):
+
+```java
+String label = switch (status) {
+    case OPEN -> "Not started";
+    case IN_PROGRESS -> "Working on it";
+    case DONE -> "Complete";
+    case CANCELLED -> "Abandoned";
+};   // no `Status.` prefix needed inside the switch — the compiler knows the type
+```
+
+Because the compiler knows every possible `Status` value, an exhaustive switch expression over an enum needs no `default` branch — add a fifth constant later and every switch that forgot to handle it fails to compile, which is exactly the safety net you want.
+
+**Enums with fields and methods** — an enum is a real class, so constants can carry data:
+
+```java
+public enum Priority {
+    LOW(1), MEDIUM(2), HIGH(3);
+
+    private final int weight;
+
+    Priority(int weight) {           // constructor runs once per constant, at class-load time
+        this.weight = weight;
+    }
+
+    public int weight() { return weight; }
+}
+
+// Priority.HIGH.weight()  ->  3
+```
+
+Constructors on an enum are implicitly `private` (you can never `new Priority(...)` yourself); every constant is created exactly once, automatically, in the order listed.
 
 ## Code Examples
 
@@ -275,6 +334,15 @@ public int compareTo(Player o) { return Integer.compare(score, o.score); }  // �
 
 An interface with 15 methods forces every implementor to write 15 bodies. Keep interfaces small and focused (often 1–3 methods) — the Interface Segregation Principle. Notice the JDK's own style: `Comparable` has one method.
 
+### 7. `valueOf` is case-sensitive
+
+```java
+Status s = Status.valueOf("done");    // ❌ IllegalArgumentException: no enum constant Status.done
+Status s = Status.valueOf("DONE");    // ✅ must match the declared name exactly
+```
+
+`valueOf` does no normalization — if the value comes from user input or an untrusted file, uppercase (or otherwise normalize) it yourself before calling `valueOf`, and wrap the call in a try/catch (or validate against `values()` first) rather than letting a typo become an uncaught crash.
+
 ## Practice Exercises
 
 1. **Abstract Shape, done right.** Rebuild Chapter 9's hierarchy with `Shape` abstract: `abstract double area()` and `abstract double perimeter()`, plus a concrete `String report()` that uses both. Implement `Circle`, `Rectangle`, and `Triangle` (Heron's formula). Verify `new Shape(...)` no longer compiles.
@@ -282,3 +350,5 @@ An interface with 15 methods forces every implementor to write 15 bodies. Keep i
 3. **Comparable Products.** A `Product` (name, price) implementing `Comparable<Product>` by price. Sort an array and print it. Then change the natural order to name (alphabetical) — one line — and observe the new sort. Bonus thought: what if some callers want price order and others name order? (One sentence; Chapter 15's `Comparator` is the answer.)
 4. **Default method evolution.** Add a default method `boolean isOverdue()` to `Payable` returning `false`, then override it in `Invoice` only. Confirm staff members inherit the default while invoices use their own. Explain in a comment why default methods exist (hint: what breaks if you add a new *abstract* method to a published interface?).
 5. **Design call.** For each of these, decide interface, abstract class, or plain class, and justify in one sentence each: (a) `Exportable` — things that can render themselves as CSV; (b) `AbstractRepository` — database access classes sharing connection-handling code; (c) `Money` — an amount plus currency; (d) `Clickable` — UI elements responding to clicks. No code required — this judgment *is* the skill.
+6. **Traffic light enum.** Declare `enum TrafficLight { RED, YELLOW, GREEN }`. Write a method `TrafficLight next(TrafficLight current)` that returns the next light in the cycle (`GREEN` after `RED`, etc.) using a switch expression — no `if`/`else` chain. Print the full cycle starting from `RED` for 6 steps (it should wrap around at least once).
+7. **Enum with data, safely parsed.** Rebuild `Priority` from this chapter's example with a `weight()` method, then write `Priority fromLabel(String label)` that uppercases the input and calls `valueOf`, catching `IllegalArgumentException` and returning `Priority.MEDIUM` as a default instead of crashing. Test it with `"high"`, `"HIGH"`, and `"urgent"` (the invalid case).

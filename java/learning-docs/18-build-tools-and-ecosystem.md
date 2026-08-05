@@ -64,6 +64,8 @@ Compiled output lands in `target/` (Gradle: `build/`) — generated, git-ignored
 
 Dependencies are identified by **coordinates** — `groupId:artifactId:version` — and fetched from **Maven Central** (the ecosystem's npm registry; browse it at central.sonatype.com or mvnrepository.com). Downloads cache in `C:\Users\<you>\.m2\repository`.
 
+The version numbers used throughout this chapter (JUnit 5.10.2, Gson 2.11.0, maven-jar-plugin 3.4.1) were current when this was written and are fine for learning, but don't copy them blindly into a real project — check mvnrepository.com for whatever's current when you're actually building something.
+
 ### The Maven lifecycle — commands you'll actually run
 
 ```powershell

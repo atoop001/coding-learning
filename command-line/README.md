@@ -26,13 +26,13 @@ A self-paced track for going from "I can open a terminal" to genuine developer f
 
 ## Projects (in order)
 
-| # | File | Difficulty | After chapter | Drills |
-|---|------|-----------|---------------|--------|
-| 1 | `projects/01-terminal-scavenger-hunt.md` | Beginner | Ch. 4 | Build and solve a folder-maze with terminal only — navigation, file ops, tab completion |
-| 2 | `projects/02-log-detective.md` | Beginner–Int. | Ch. 5 | Generate and investigate a service log with search + pipeline tools |
-| 3 | `projects/03-environment-makeover.md` | Intermediate | Ch. 7 | Audit and rebuild your PATH, profiles, aliases; install tools cleanly; reproducible setup |
-| 4 | `projects/04-project-scaffolder.md` | Int.–Advanced | Ch. 8 | Build a real `new-project` scaffolding utility in PowerShell, then port it to Bash |
-| 5 | `projects/05-capstone-automated-workflow.md` | Advanced | Ch. 10 | Nightly backup/report/cleanup pipeline, scheduled on Windows *and* deployed to WSL over ssh with cron |
+| # | File | Difficulty | After chapter | Chapters used | Drills |
+|---|------|-----------|---------------|----------------|--------|
+| 1 | `projects/01-terminal-scavenger-hunt.md` | Beginner | Ch. 4 | Ch. 1–4 | Build and solve a folder-maze with terminal only — navigation, file ops, tab completion |
+| 2 | `projects/02-log-detective.md` | Beginner–Int. | Ch. 5 | Ch. 2, 4, 5 | Generate and investigate a service log with search + pipeline tools |
+| 3 | `projects/03-environment-makeover.md` | Intermediate | Ch. 7 | Ch. 1, 2, 5, 6, 7 | Audit and rebuild your PATH, profiles, aliases; install tools cleanly; reproducible setup |
+| 4 | `projects/04-project-scaffolder.md` | Int.–Advanced | Ch. 8 | Ch. 3, 5, 6, 8, 9 | Build a real `new-project` scaffolding utility in PowerShell, then port it to Bash |
+| 5 | `projects/05-capstone-automated-workflow.md` | Advanced | Ch. 10 | Ch. 3–6, 8–10 | Nightly backup/report/cleanup pipeline, scheduled on Windows *and* deployed to WSL over ssh with cron |
 
 ## Suggested cadence
 

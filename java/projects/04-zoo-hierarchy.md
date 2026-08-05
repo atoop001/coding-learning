@@ -12,7 +12,7 @@ Model a zoo in objects: an `Animal` base class, a family of subclasses (mammals,
 
 - 08 (Classes & Objects) — fields, constructors, encapsulation, `toString`
 - 09 (Inheritance & Polymorphism) — `extends`, `super`, `@Override`, dynamic dispatch, `instanceof`
-- 10 (Interfaces & Abstract Classes) — abstract `Animal`, capability interfaces
+- 10 (Interfaces & Abstract Classes) — abstract `Animal`, capability interfaces, `enum` (stretch goal `Diet`)
 - (Supporting: 05 methods, 07 arrays for the zoo's internal storage)
 
 ## Requirements checklist

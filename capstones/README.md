@@ -15,13 +15,13 @@ its own repo, linked from the spec's folder).
 
 | # | Capstone | Effort | Start after |
 |---|----------|--------|-------------|
-| 1 | [Tutoring Business Platform](01-tutoring-business-platform/README.md) | 40–80 h | react + node-express + sql |
+| 1 | [Tutoring Business Platform](01-tutoring-business-platform/README.md) | 40–80 h | react + node-express + sql + testing-debugging-security |
 | 2 | [Portfolio & Blog with a Real Backend](02-portfolio-and-blog/README.md) | 15–25 h | node-express (databases + auth) |
 | 3 | [Learning Progress Dashboard](03-learning-progress-dashboard/README.md) | 10–15 h (v1) | react — v1; node-express — v2 |
 | 4 | [Open-Source Contribution Program](04-open-source-contributions/README.md) | 15–30 h | git-github + one language track |
-| 5 | [Public API with a Public Face](05-public-api/README.md) | 25–40 h | node-express + sql + deployment-devops |
+| 5 | [Public API with a Public Face](05-public-api/README.md) | 25–40 h | node-express + sql + deployment-devops + testing-debugging-security |
 | 6 | [Data Pipeline & Public Dashboard](06-data-pipeline-dashboard/README.md) | 25–40 h | python + sql + deployment-devops |
-| 7 | [Same App, Twice](07-same-app-twice/README.md) | 30–50 h | java OR csharp + a finished backend |
+| 7 | [Same App, Twice](07-same-app-twice/README.md) | 30–50 h | java OR csharp + a finished backend + testing-debugging-security |
 
 ## Suggested Order
 
@@ -40,6 +40,28 @@ its own repo, linked from the spec's folder).
 6. **Capstone 7 (Same App, Twice)** last — it requires a finished backend plus
    the Java or C# track, and it's the strongest proof that your skills
    transfer across languages.
+
+## Keeping It Free
+
+Every capstone here is shippable at **$0/month** as of mid-2026 — but free tiers
+change constantly, so verify current terms before committing to any platform.
+The combination that works today:
+
+- **Static sites & SPAs** — Cloudflare Pages or GitHub Pages (no card required,
+  generous limits).
+- **Node/Express APIs** — Render's free web service. It spins down after ~15 idle
+  minutes and cold-starts in 30–60 seconds; fine for a portfolio project — mention
+  it in your README so reviewers aren't surprised by the first load.
+- **Databases** — Neon (free Postgres that scales to zero when idle but doesn't
+  expire) or Turso (free SQLite with the most generous limits). Avoid Render's
+  free Postgres (expires after 30 days); Supabase's free projects pause after
+  7 idle days. Railway and Fly.io no longer offer true free tiers.
+- **Scheduled jobs** — GitHub Actions cron on a public repo: free, no limits that
+  matter at this scale.
+- **Domains** — the platforms' free subdomains (`*.pages.dev`, `*.onrender.com`,
+  `*.github.io`) cost nothing. A custom domain is the one unavoidable spend
+  (~$10–11/year at Porkbun or Cloudflare Registrar) and only Capstone 1 asks for
+  one — if you already own a domain, point a subdomain at it for free.
 
 You do **not** need all seven to be employable. Capstones 1 + 2 + 4 shipped well
 beat all seven half-finished.

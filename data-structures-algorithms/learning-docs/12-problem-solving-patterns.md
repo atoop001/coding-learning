@@ -61,6 +61,7 @@ When order isn't given, consider buying it for O(n log n): after sorting, duplic
 | Intervals, meetings, overlaps | Sort then sweep |
 | "Seen before?" anywhere | Hash set |
 | Unsorted but only need k extremes | Heap (Chapter 10) |
+| Prefix search / autocomplete over many strings | Trie (Chapter 9) |
 
 ## Code Examples
 

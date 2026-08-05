@@ -12,11 +12,10 @@ This is the project that pays off every single day afterward: seconds saved per 
 
 ## Chapters used
 
-- Chapter 6: Environment & Configuration (core)
+- Chapter 6: Environment & Configuration (core — functions and execution policy both covered here)
 - Chapter 7: Package Managers & Installing Tools (core)
 - Chapter 1–2: Orientation & navigation (assumed)
 - Chapter 5: Pipeline (for the audit)
-- Chapter 8: Scripts (functions in your profile; execution policy)
 
 ## Requirements checklist
 

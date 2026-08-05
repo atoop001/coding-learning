@@ -77,6 +77,46 @@ try (Stream<String> lines = Files.lines(path)) {     // lazy — reads as you co
 
 `Scanner` (Chapter 2) works on files as well: `new Scanner(Files.newBufferedReader(path))` — handy for token-by-token parsing. For structured formats in the real world (JSON, CSV with quoting), you'd use a library (Jackson, OpenCSV) via Maven — Chapter 18; hand-rolling `split(",")` is fine for learning and simple data.
 
+### Working with dates: `java.time`
+
+Files and CSV rows are full of dates, and Java's modern date/time API — `java.time` (Java 8+) — is what you parse them into. Ignore `java.util.Date`/`Calendar` entirely; they predate `java.time`, are mutable (a correctness hazard), and every current tutorial or library expects `java.time` types instead.
+
+The core types:
+
+```java
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+
+LocalDate day = LocalDate.of(2026, 3, 15);        // a calendar date, no time, no timezone
+LocalDateTime moment = LocalDateTime.of(2026, 3, 15, 14, 30);  // date + time, still no timezone
+YearMonth ym = YearMonth.of(2026, 3);             // just year + month — perfect for grouping/reporting
+```
+
+- `LocalDate` — a date only (`2026-03-15`). Use it for due dates, birthdays, order dates — anything without a meaningful time-of-day.
+- `LocalDateTime` — date and time, no timezone. Use it for timestamps within a single-timezone application (a journal entry, a log line).
+- `YearMonth` — just year and month, no day. Built for exactly the "group sales by month" shape of problem — no need to truncate a `LocalDate` yourself.
+- All three are **immutable**: `plusDays(1)`, `minusMonths(2)`, etc. return a *new* instance; the original is untouched (same immutability discipline as `String`).
+
+**Parsing and formatting** — `parse()` and `format()` are inverses of each other:
+
+```java
+import java.time.format.DateTimeFormatter;
+
+// Parsing: String -> java.time type
+LocalDate d = LocalDate.parse("2026-03-15");              // ISO format (yyyy-MM-dd) needs no formatter
+YearMonth ym = YearMonth.parse("2026-03");                 // ISO format (yyyy-MM) likewise
+
+// A custom format needs an explicit formatter, both ways
+DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+LocalDate us = LocalDate.parse("03/15/2026", fmt);
+String formatted = d.format(fmt);                           // "03/15/2026"
+```
+
+- `LocalDate.parse(String)` with no second argument **requires ISO-8601** (`yyyy-MM-dd`). Any other layout — `03/15/2026`, `15-Mar-2026` — throws `DateTimeParseException` unless you supply a matching `DateTimeFormatter`.
+- `parse()`/`format()` are symmetric: whatever pattern builds the `DateTimeFormatter`, use the *same* formatter for both directions on that data.
+- `LocalDate.now()` / `LocalDateTime.now()` read the system clock — handy for "created at" timestamps, useless for reproducible tests (inject a fixed date instead, or accept it in a parameter).
+
 ## Code Examples
 
 ### Write, read, append — round trip
@@ -257,6 +297,18 @@ try (var lines = Files.lines(path)) {        // ✅
 }
 ```
 
+### 7. Reaching for `java.util.Date` (or ignoring parse failures)
+
+```java
+Date d = new Date();                          // ❌ legacy, mutable, timezone-confusing — avoid entirely
+LocalDate d = LocalDate.now();                // ✅ java.time, immutable, what modern code expects
+
+LocalDate.parse("03/15/2026");                // ❌ DateTimeParseException — that's not ISO-8601
+LocalDate.parse("03/15/2026", DateTimeFormatter.ofPattern("MM/dd/yyyy"));   // ✅
+```
+
+Every file or CSV row with a non-ISO date will throw `DateTimeParseException` (a `RuntimeException`) unless parsed with the matching formatter — treat it like any other row-validation failure (Chapter 14): catch it per-row, don't let one bad date crash the whole file load.
+
 ## Practice Exercises
 
 1. **Journal.** A console app: each run asks for a journal entry and appends it to `journal.txt` with a timestamp (`java.time.LocalDateTime.now()`). A `read` command prints all past entries numbered. Confirm entries survive across runs — your first persistent program.
@@ -264,3 +316,5 @@ try (var lines = Files.lines(path)) {        // ✅
 3. **CSV round trip.** Extend `CsvLoader`: after loading students, add a computed letter grade to each and write `report.csv` with a header row (`name,score,grade`). Re-open the file you wrote and verify it parses back to the same students. Where do bad rows in the *input* end up — and should they appear in the output? (Decide and document.)
 4. **File organizer (careful: operates on real files!).** In a scratch directory you create, generate 10 empty files with mixed extensions (`.txt`, `.jpg`, `.pdf`) using `Files.createFile`, then write a program that sorts them into subfolders by extension (`Files.move` + `createDirectories`). Print each move. Run it twice — the second run should do nothing gracefully.
 5. **Try-with-resources mechanics.** Write a class `Noisy implements AutoCloseable` whose constructor and `close()` both print. Open three in one try-with-resources statement and observe construction and close order (close is reverse!). Then throw an exception mid-block and confirm all three still close. Summarize the guarantees in a comment.
+6. **Date-grouped report.** Write a CSV of `date,amount` rows (mix of a few different months, ISO dates) to a file, then read it back and group the rows by `YearMonth` into a `Map<YearMonth, Double>` of totals (Chapter 12's `Map` + `merge`). Print the months in order. Then add one deliberately malformed date and confirm it's skipped with a clear message rather than crashing the whole read.
+7. **Format round trip.** Read a list of dates as `"dd-MM-yyyy"` strings (build a `DateTimeFormatter` for that pattern), parse each into a `LocalDate`, then write them back out re-formatted as ISO (`yyyy-MM-dd`) to a new file. Confirm what happens (and which exception you get) if one line uses `"2026-03-15"` by mistake.

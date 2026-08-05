@@ -23,7 +23,6 @@ In Project 1 you wrote tests for existing code. Now flip the order: build a modu
 - Chapter 2 — Writing Your First Unit Tests
 - Chapter 3 — Designing Testable Code (pure core; `render` does no I/O)
 - Chapter 4 — Edge Cases & Test Design
-- Chapter 7 — Debugging Fundamentals (you *will* debug regex/parsing surprises)
 
 ## Requirements checklist
 

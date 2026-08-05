@@ -10,7 +10,7 @@ A console system for a small library: catalog books, register members, check boo
 
 ## Chapters used
 
-- 08 (Classes & Objects), 10 (Interfaces) — the domain model
+- 08 (Classes & Objects), 09 (Inheritance & Polymorphism), 10 (Interfaces) — the domain model
 - 11 (Packages) — organized package layout
 - 12 (Collections Framework) — List/Set/Map selection and iteration
 - 13 (Generics) — a generic utility class or method of your own

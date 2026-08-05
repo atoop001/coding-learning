@@ -79,7 +79,7 @@ Attributes that matter:
 | `HttpOnly` | JavaScript cannot read it (protects login cookies from malicious scripts). |
 | `SameSite` | Whether it's sent on requests *initiated by other sites* (defense against CSRF; `Lax` is the modern default). |
 
-Cookies are scoped **per site** — `evil.com` can never read `bank.com`'s cookies. Their automatic-attachment behavior is what makes logins work (Chapter 7) and also what makes cross-site tracking possible (third-party cookies — now heavily restricted by browsers).
+Cookies are scoped **per site** — `evil.com` can never read `bank.com`'s cookies. Their automatic-attachment behavior is what makes logins work (Chapter 7) and also what makes cross-site tracking possible (third-party cookies — a cookie set by a domain other than the one in the address bar, typically an ad or analytics network embedded on many sites). Browser policy on this differs by vendor and keeps shifting: Safari and Firefox block third-party cookies by default; Chrome has flip-flopped on deprecating them and still allows them by default as of this writing. Don't take this paragraph's word for it — check each browser's current behavior before relying on it.
 
 ### Web storage: localStorage and friends
 
@@ -148,7 +148,7 @@ Close the tab entirely, reopen the same site, run `localStorage.getItem("experim
 
 - **"The browser displays the HTML file."** The browser displays the *DOM* — a live structure initially built from HTML but freely rewritten by JavaScript. View-source and Elements can differ wildly.
 - **"Refreshing gets a completely fresh copy."** A normal refresh happily serves cached and 304-revalidated resources. That's why "did you hard-refresh?" (`Ctrl+Shift+R`) is a real debugging question — and why "clear your cache" fixes stale-site problems.
-- **"Cookies are files sites store on your PC / are inherently spyware."** A cookie is a scoped key-value string with an expiry, unreadable by other sites. The tracking reputation comes from one specific pattern — *third-party* cookies set by ad networks embedded across many sites — which modern browsers now restrict.
+- **"Cookies are files sites store on your PC / are inherently spyware."** A cookie is a scoped key-value string with an expiry, unreadable by other sites. The tracking reputation comes from one specific pattern — *third-party* cookies set by ad networks embedded across many sites — and how aggressively that pattern is restricted depends entirely on which browser you're using (see above); it's not a settled, universal fact.
 - **"localStorage is a secure place for secrets."** Any JavaScript running on the page — including injected malicious scripts — can read it. Sensitive tokens generally belong in HttpOnly cookies precisely because scripts *can't* touch those.
 - **"Caching just makes things stale and buggy."** Done right (hashed filenames + long max-age + revalidated HTML), caching is *the* biggest performance win on the web and never serves stale code. Bugs come from caching without a busting strategy.
 - **"The page loads, then it's done."** Rendering is continuous: every JS change re-triggers parts of style/layout/paint. A "loaded" page is a running program, not a finished document.

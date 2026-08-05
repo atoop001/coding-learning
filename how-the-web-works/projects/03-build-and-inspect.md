@@ -17,6 +17,8 @@ Time to sit on both sides of the wire at once. You'll build a small multi-page s
 - Chapter 6 (caching, 304s, conditional requests, DOM vs source)
 - Chapter 9 (static serving, access logs, MIME types)
 
+> **Look-ahead note:** this project cites Chapter 9 before the suggested cadence gets there. You don't need the whole chapter — just skim the static-serving/MIME-type sections when the checklist below asks for them.
+
 ## Requirements Checklist
 
 Build (in a project folder, e.g. `my-inspected-site/`):

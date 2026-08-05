@@ -32,8 +32,8 @@ Guided investigation/build specs, easiest to hardest. No solution code anywhere 
 | # | File | What you do | Do it after |
 |---|------|-------------|-------------|
 | 1 | `01-anatomy-of-a-page-load.md` | Document a real site's full load story from the DevTools Network tab | Chapters 1–4 (6 helps) |
-| 2 | `02-dns-and-http-detective.md` | Profile five sites' DNS + HTTP infrastructure entirely from the terminal | Chapters 1–5 |
-| 3 | `03-build-and-inspect.md` | Serve your own static site locally and reconcile every browser request with the server log | Chapters 1–6 |
+| 2 | `02-dns-and-http-detective.md` | Profile five sites' DNS + HTTP infrastructure entirely from the terminal | Chapters 1–5 (Ch. 9 sections on server fingerprints/CDN evidence are a look-ahead — skim them when the project asks) |
+| 3 | `03-build-and-inspect.md` | Serve your own static site locally and reconcile every browser request with the server log | Chapters 1–6 (Ch. 9 sections on static serving/MIME types are a look-ahead — skim them when the project asks) |
 | 4 | `04-api-field-guide.md` | Systematically map a public REST API with curl, then build a fetch-powered page on it | Chapters 4, 6–8 |
 | 5 | `05-capstone-deploy-and-narrate.md` | Deploy a site publicly over HTTPS and write the evidence-backed journey of one request to it | All ten |
 

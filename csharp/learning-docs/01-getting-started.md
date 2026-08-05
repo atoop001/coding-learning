@@ -31,16 +31,16 @@ By the end of this chapter you will have the .NET SDK installed on Windows, a wo
 
 ## Installing the .NET SDK on Windows
 
-1. Go to <https://dotnet.microsoft.com/download> and download the latest **.NET SDK** (LTS version recommended) for Windows x64.
+1. Go to <https://dotnet.microsoft.com/download> and download the current **.NET SDK** — the current LTS release (.NET 8 or later) is recommended — for Windows x64.
 2. Run the installer with default options.
 3. Open a new terminal (PowerShell or Windows Terminal) and verify:
 
 ```powershell
 dotnet --version
-# Expected output: something like 8.0.404 (any recent version is fine)
+# You'll see something like 8.0.x or newer — any current LTS version is fine
 ```
 
-Alternatively, with winget: `winget install Microsoft.DotNet.SDK.8`
+Alternatively, with winget: `winget install Microsoft.DotNet.SDK.8` (swap `8` for whatever the current LTS major version is when you install)
 
 ## Choosing an Editor
 

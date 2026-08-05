@@ -68,8 +68,10 @@ Classes are your daily driver. An element can carry several: `class="card featur
 a:hover        { text-decoration: underline; }  /* mouse over */
 a:visited      { color: purple; }
 button:focus   { outline: 2px solid blue; }     /* keyboard focus — never remove without replacement! */
+button:focus-visible { outline: 2px solid blue; } /* like :focus, but only when the browser thinks focus should be visible (keyboard tab, not a mouse click) — prefer this so clicking doesn't leave a ring mouse users didn't ask for */
 button:active  { transform: scale(0.98); }      /* while pressed */
 input:invalid  { border-color: crimson; }
+input:user-invalid { border-color: crimson; }   /* like :invalid, but only lights up after the user has interacted with the field — no more scaring people with red borders before they've typed anything */
 li:first-child { font-weight: bold; }
 li:last-child  { border-bottom: none; }
 li:nth-child(odd)  { background: #f5f5f5; }     /* zebra striping */

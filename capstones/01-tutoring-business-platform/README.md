@@ -195,8 +195,12 @@ than after it.
   production. A single `docker compose up` should bring up the app and database locally.
 - [ ] Set up CI (GitHub Actions) that installs, lints, builds, and runs the full test suite on
   every push. A red build blocks deployment — treat that as a rule, not a suggestion.
-- [ ] Deploy to a PaaS (Railway, Render, Fly.io, or similar) with a managed or persistent
-  database. Verify that data survives a redeploy before you trust it with real records.
+- [ ] Deploy to a PaaS with a genuinely free tier. As of mid-2026 that means Render's free
+  web service paired with a free Neon Postgres — Railway and Fly.io no longer have true
+  free tiers, and Render's own free Postgres expires after 30 days, so verify current
+  terms before committing. Free services spin down when idle and cold-start in 30–60
+  seconds; that's acceptable here — just note it in your README. Verify that data
+  survives a redeploy before you trust it with real records.
 - [ ] Manage all secrets through the platform's environment configuration — database URL,
   session secret, everything. Use placeholders like `<your-session-secret>` in any
   documentation or example files.

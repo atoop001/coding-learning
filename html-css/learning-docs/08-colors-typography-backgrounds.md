@@ -178,7 +178,7 @@ a:hover { color: #1e40af; }
 ```css
 /* One hue (220 = blue), varied lightness = instant coherent palette */
 :root {
-  /* (custom properties — fully explained in Chapter 14; pattern shown early
+  /* (custom properties — fully explained in Chapter 15; pattern shown early
       because you'll see it everywhere) */
   --brand:       hsl(220 70% 50%);
   --brand-dark:  hsl(220 70% 35%);

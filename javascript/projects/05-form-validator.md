@@ -38,7 +38,7 @@ The engineering focus: validation rules are **data + pure functions**, not a tan
 ## Hints
 
 - Start with zero UI: define the factories and rule lists, then in the console run values through `validateField` until the messages are right. The DOM wiring afterwards is mostly plumbing.
-- A rule factory is Chapter 13's `makeMultiplier` in disguise: `const minLength = (n) => (value) => value.length >= n ? null : \`Must be at least ${n} characters\`;`
+- A rule factory is Chapter 13's `makeMultiplier` in disguise: a function that takes the configuring value (like `n`) and returns *another* function that closes over it and does the real work later. Non-validator reminder of the shape: `const multiplyBy = (n) => (x) => x * n;` — `multiplyBy(3)` hands you back a one-argument function that remembers `3` forever, so `multiplyBy(3)(5)` is `15`. `minLength(n)` has the identical skeleton — outer function captures `n`, inner function takes the real argument (here, the field's `value`) and returns the pass/fail result. Revisit Chapter 13 if the closure part feels shaky.
 - "Has a digit" without regex: `[..."0123456789"].some(d => value.includes(d))` — and that generalizes into a `mustContain(chars, label)` factory.
 - Track per-field UI state (e.g., `touched`) in an object keyed by field name, so you know whether to validate on `input` yet.
 - For "form fully valid," reuse the same machinery: run every field's rules and check `every(...)` — don't maintain a separate `isValid` flag that can drift out of sync.
