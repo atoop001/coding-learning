@@ -29,7 +29,7 @@ Mixing the two without noticing is the trap: asking for output when you actually
 **When *not* to use AI.** Two categories are worth calling out explicitly, because the pressure to reach for AI by default is real and not always right:
 
 - **Fundamentals you're still learning.** If you're two weeks into learning loops, asking AI to write the loop skips the exact rep your brain needed. This isn't a purity rule — it's that the entire value of practicing fundamentals is the struggle, and outsourcing the struggle outsources the learning (Chapter 5 goes deeper on this).
-- **Security-critical code you can't yet evaluate.** Authentication, authorization, cryptography, payment handling, anything touching secrets. AI can absolutely help you learn *about* these, but generating production code you cannot yet independently verify (because verifying it requires expertise you don't have yet) inverts the whole model this track teaches: you'd be shipping code whose correctness you're trusting rather than checking. Learn the fundamentals of the specific area first (`testing-debugging-security/` chapters 10–12), then use AI on it with real verification ability behind you.
+- **Security-critical code you can't yet evaluate.** Authentication, authorization, cryptography, payment handling, anything touching secrets. AI can absolutely help you learn *about* these, but generating production code you cannot yet independently verify (because verifying it requires expertise you don't have yet) inverts the whole model this track teaches: you'd be shipping code whose correctness you're trusting rather than checking. Learn the fundamentals of the specific area first (`testing-debugging-security/` chapters 10–12), then use AI on it with real verification ability behind you. Watch specifically for *insecure-by-default* output: a hallucinated API call throws an error and announces itself; an insecure pattern like string-concatenated SQL just runs, correctly, on every input you happen to try (see the example below).
 
 ## Code Examples
 
@@ -99,6 +99,22 @@ This gets you the understanding a solved problem can't; the code you eventually 
 all rows, which won't scale. Let's restart: I need the filtering
 done in the SQL query itself. Here's the table schema: [paste]."
 ```
+
+### Insecure-by-default: code that runs fine but shouldn't ship
+
+Not every AI mistake looks like a mistake. Some output executes without error, returns the right answer on the inputs you happen to test, and is still wrong in a way that only shows up under attack:
+
+```python
+# AI-GENERATED (runs fine, returns correct results, still vulnerable):
+query = f"SELECT * FROM users WHERE username = '{username}'"
+cursor.execute(query)
+
+# FIXED -- parameterized: SQL text and data travel separately.
+query = "SELECT * FROM users WHERE username = ?"
+cursor.execute(query, (username,))
+```
+
+The takeaway: hallucinations announce themselves by breaking. Insecure defaults don't -- you have to already know what a parameterized query looks like to notice the first version is wrong at all. See `testing-debugging-security/learning-docs/11-common-web-vulnerabilities.md` for the full SQL-injection pattern, and the equivalent problem for unescaped output.
 
 ## Common Pitfalls
 

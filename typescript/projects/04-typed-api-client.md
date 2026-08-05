@@ -30,6 +30,9 @@ Using the finished client should feel like an SDK: everything autocompletes, ill
 
 ## Requirements Checklist
 
+### Setup
+- [ ] `tsconfig` has `strict: true` and `noUncheckedIndexedAccess: true`, both passing
+
 ### Canonical types & derived views
 - [ ] Canonical interfaces for at least three resources (e.g., `User`, `Post`, `Todo`) matching the real API responses
 - [ ] `NewPost = Omit<Post, "id">` -style creation payload types — derived, not redeclared

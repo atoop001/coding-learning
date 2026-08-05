@@ -28,7 +28,7 @@ Every chapter contains: Overview, Definitions & Explanations, Code Examples, Com
 2. `learning-docs/02-the-verification-workflow.md` — the core skill: treat AI output like a PR from a fast, overconfident stranger. Read every line, run it, test it, question it, check the docs. Worked example: a bug hunt.
 3. `learning-docs/03-prompting-and-context.md` — giving good context, iterating vs. restarting, decomposing tasks, prompting to *learn* vs. prompting for *output*, and when not to reach for AI at all.
 4. `learning-docs/04-ai-in-the-professional-workflow.md` — team AI policies, never pasting secrets or proprietary code into tools that train on input, licensing questions, reviewing AI-assisted PRs, honest documentation, and owning every line you ship.
-5. `learning-docs/05-keeping-your-skills-real.md` — the atrophy risk, and deliberate-practice patterns that keep AI a leverage tool instead of a crutch.
+5. `learning-docs/05-keeping-your-skills-real.md` — the atrophy risk, and deliberate-practice patterns that keep AI a leverage tool instead of a crutch, chief among them "solve first, then compare": attempt it yourself before asking AI, then study the differences.
 6. `learning-docs/06-interviews-in-the-ai-era.md` — explaining AI-assisted code live, behavioral questions about your workflow, take-home policies, live coding with/without assistants, and presenting AI fluency on a resume honestly.
 
 ## Projects (easiest → hardest)

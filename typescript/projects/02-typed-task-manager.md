@@ -23,6 +23,9 @@ No persistence and no UI required — in-memory arrays and `console.log` output 
 
 ## Requirements Checklist
 
+### Setup
+- [ ] `tsconfig.json` with `strict: true`
+
 ### Type model
 - [ ] `Priority` is a literal union (`"low" | "medium" | "high"`), not `string`
 - [ ] `Task` is a discriminated union over a `status` discriminant with members: `todo`, `in-progress`, `done`, `cancelled`

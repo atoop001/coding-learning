@@ -37,5 +37,6 @@ Have an AI tool generate a small, self-contained module — a date-range utility
 ## Stretch Goals
 
 - Repeat the audit with a different AI tool (a different chat assistant, or an agentic tool if you have access) on the same spec, and compare which flaws each version had, if any.
+- Repeat the exercise with a different tool *category* rather than just a different tool — e.g., an agentic tool like Claude Code versus a plain chat assistant. Compare what each got right and wrong, and note how the workflow itself differed (how much you had to paste in vs. what the tool could read on its own, how it verified or didn't verify its own output, how easy each was to audit).
 - Ask the AI, after your audit is done, to review your own fix — see whether it agrees with your reasoning or raises something you missed.
 - Add a short "what I'd check differently next time" section to your `AUDIT.md`, reflecting on which part of the five-step workflow was actually the one that found the flaw.

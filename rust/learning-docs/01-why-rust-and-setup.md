@@ -59,10 +59,13 @@ Rust's iterators, generics, and closures compile down to the same machine code y
 
 ```text
 > rustc --version
-rustc 1.79.0 (or newer)
+rustc 1.85.0 (or newer)
 > cargo --version
-cargo 1.79.0 (or newer)
+cargo 1.85.0 (or newer)
 ```
+
+(1.85 is the version that introduced the 2024 edition this track uses; any fresh
+rustup install will be far newer than that.)
 
 4. **Editor:** VS Code + the **rust-analyzer** extension. rust-analyzer gives you inline type hints, which are enormously helpful while learning — it shows you the types the compiler infers.
 5. **Keep updated** later with `rustup update`.
