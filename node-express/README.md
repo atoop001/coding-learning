@@ -10,7 +10,7 @@ A self-paced path from "I know JavaScript" to "I can build, secure, test, and sh
 ## Prerequisites
 
 - **JavaScript track (required)** — all 18 chapters, especially functions, error handling, async/await, fetch, and modules. This track assumes you are fluent in the language and never re-teaches it.
-- **SQL track (strongly recommended)** — chapters 9 onward store data in a real database. You can start this track without SQL and pause to learn it before chapter 9, but don't skip it entirely.
+- **SQL track (required before Chapter 9)** — chapters 9 onward store data in a real relational database, and Project 4 and the capstone assume you're already fluent with JOINs and schema design, not learning them for the first time. Complete the SQL track — at least through joins and schema design — before starting Chapter 9. This isn't optional polish; Chapter 9 and everything after it will not re-teach SQL.
 - **Windows note:** examples use PowerShell. Almost everything is identical on macOS/Linux; the chapters call out the few places it differs (installing Node, environment variables, `curl`).
 
 You do **not** need the React track first — but if you've started it, the capstone here is designed to become the backend for a React frontend.

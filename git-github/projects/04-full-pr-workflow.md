@@ -6,7 +6,7 @@ Run the complete professional collaboration loop — repeatedly, until it's rout
 
 This is the project that most directly converts "knows Git" into "ready to work on a team."
 
-## Difficulty
+## Difficulty & Estimated Effort
 
 **Medium-Hard (4/5).** Estimated effort: 4–6 hours across several sessions — the value compounds with repetition, so spreading it out is better than cramming.
 
@@ -25,6 +25,7 @@ This is the project that most directly converts "knows Git" into "ready to work 
 - [ ] Plan 4+ small "features" as content changes (e.g., sections of a study-guide site in markdown) — each shippable in 2–4 commits
 - [ ] Commit your review checklist from Chapter 8's exercises as `REVIEW-CHECKLIST.md` — via the project's very first PR
 - [ ] After that first PR merges, enable **branch protection** on `main`: require a pull request before merging. Verify by attempting a direct push to `main` and getting rejected
+- [ ] **Optional:** add a `CODEOWNERS` file (paths → GitHub usernames who must approve changes to them) and set branch protection to require review from a code owner; verify a PR touching an owned path shows the requirement
 
 **Part B — Reps (at least 3 more PRs, one per feature)**
 For every PR:

@@ -4,6 +4,8 @@
 
 The array is the most fundamental data structure in computing: a block of elements sitting side by side in memory. Python's `list` and JavaScript's `Array` are *dynamic arrays* — arrays that grow themselves as needed. Understanding what they actually do under the hood explains why `append` is fast, why `insert(0, x)` is slow, and why "just use a list" is sometimes the wrong answer. Every later structure in this track is either built on arrays or built to fix an array's weaknesses, so this chapter is load-bearing.
 
+*Forward pointer:* Chapter 12 catalogs reusable problem-solving patterns — two pointers, sliding window, and friends — that turn a lot of array/string busywork into O(n) one-liners. It only needs Chapters 1–5, so if you want quicker wins on array problems, it's fine to skim Chapter 12 early rather than waiting for it in sequence.
+
 ## Definitions & Explanations
 
 ### Static arrays and memory

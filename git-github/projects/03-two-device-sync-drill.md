@@ -6,7 +6,7 @@ You already sync a workspace across devices — this project makes you *good* at
 
 Everything here transfers 1:1 to your real multi-device workflow — after this drill, a rejected push on your actual laptop is a 60-second non-event.
 
-## Difficulty
+## Difficulty & Estimated Effort
 
 **Medium (3/5).** Estimated effort: 3–4 hours, plus a GitHub account. Requires working GitHub authentication (Chapter 7's setup).
 

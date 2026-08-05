@@ -46,7 +46,7 @@ At **4–6 hours/week**, the track takes roughly **10–12 weeks**:
 - **Week 1:** Chapter 1, then Project 1. Ship something in week one — the psychological unlock of a real URL matters.
 - **Weeks 2–3:** Chapters 2–3. No project yet; these are the mental models everything else leans on.
 - **Weeks 4–5:** Chapters 4–5, then Project 2. Expect Docker Desktop/WSL2 setup friction — budget a session for it.
-- **Week 6:** Chapter 6, then Project 4 can start (finish it after you're comfortable). Chapter 7, then Project 3 — do Project 3 promptly; you'll keep that pipeline forever.
+- **Week 6:** Chapter 6, then Project 4 can start (finish it after you're comfortable). Chapter 7, then Project 3 — do Project 3 promptly; you'll keep that pipeline forever. (Project 4 starting before Project 3 finishes is deliberate overlap, not a contradiction of the difficulty ordering below — Project 3's CI pipeline can bake in the background while you start Project 4's compose work.)
 - **Weeks 7–8:** Chapters 8–9, then start Project 5. This is the track's centerpiece deliverable: your API at a real URL.
 - **Week 9:** Chapters 10–11 while Project 5 is in flight (it needs both).
 - **Week 10:** Chapter 12; put a custom domain on Project 5 or Project 1 if you bought one.
@@ -54,7 +54,7 @@ At **4–6 hours/week**, the track takes roughly **10–12 weeks**:
 
 Rules of thumb:
 - Read the chapter's pitfalls section *before* the exercises, not after something breaks.
-- Everything here costs $0 or nearly $0 if you stay on free tiers — chapters flag where free tiers bite (cold starts, expiring databases).
+- $0 is genuinely achievable (as of mid-2026: Render's free web service + a free Neon or Turso database), but the free-tier landscape has narrowed — Railway and Fly.io no longer have true free tiers, and free tiers change constantly regardless. Chapters flag where they bite (cold starts, expiring databases); capstones/README.md's "Keeping It Free" section is the maintained summary if you want current specifics without re-deriving them.
 - When a deploy fails, the logs are the exercise. Resist the urge to delete and retry blindly.
 - Keep a running `DEPLOY-NOTES.md` in each project you ship: every error you hit and how you fixed it. That file becomes interview material.
 

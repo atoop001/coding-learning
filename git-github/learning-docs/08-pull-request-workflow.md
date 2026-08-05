@@ -43,6 +43,33 @@ main ──▶ feature/login ──▶ origin ──▶ on GitHub ─▶ maybe f
 
 **Draft PR** — a PR flagged "not ready yet"; used to share work-in-progress for early feedback. Turning it "Ready for review" is the signal.
 
+### Reviewing someone else's code
+
+Self-review (above) trains the eye; sooner or later the diff belongs to someone else, and the job changes from "spot my own mistakes" to "help a colleague ship, and protect the codebase, without being a bottleneck or a jerk." Same GitHub UI, different judgment calls.
+
+**The three verdicts** — every GitHub review ends in one of three states, chosen deliberately, not by default:
+- **Comment** — feedback, no verdict. Use it for questions, minor musings, or when you're not the right person to approve/block. Doesn't affect mergeability.
+- **Approve** — "I've read this and I'm confident it should merge" (possibly with small nit comments alongside — nits don't withhold approval). This is the default outcome for a healthy PR; reserve it for genuine confidence, not rubber-stamping.
+- **Request changes** — "this shouldn't merge as-is." Blocks merging on protected branches until re-reviewed. Use it for real problems: a bug, a missing test for critical logic, a security issue, an approach that needs to change — not for style preferences or things you'd merely do differently.
+
+**Reading a stranger's diff efficiently** — a PR is not a novel to read front-to-back; read it in an order that builds understanding fast:
+1. **Start with the PR description.** What's it trying to do and why? Everything else is judged against that stated intent, not against what you'd have built instead.
+2. **Read the tests first (if any).** Tests are the author's own claim about correct behavior — they tell you what the change is supposed to do faster than the implementation does, and their absence on a risky change is itself a finding.
+3. **Then read the implementation**, checking it against both the description and the tests.
+4. **Ask "what would break this?"** — edge cases, empty input, concurrent access, the unhappy path. This is where real bugs get caught; "does it look plausible" rarely does.
+
+**Writing actionable feedback:**
+- Comment on the code, not the person — "this loop re-reads the file each iteration" not "you didn't think about performance."
+- Say *why*, not just *what* — "this will throw on an empty list" beats "fix this."
+- Suggest a direction when you have one; GitHub's suggestion blocks let a reviewer propose exact replacement text the author can accept with one click.
+- Distinguish **blocking** from **nit** explicitly (many teams prefix nits: `nit: rename this for clarity`) so the author instantly knows what's optional vs. what needs addressing before merge.
+
+**Responding to reviews of your own work** — the other half of the skill, and where most learners never get deliberate practice:
+- Assume good intent; a blunt comment is usually haste, not hostility.
+- Reply to each thread — fixed, pushed a commit, or explain your reasoning if you disagree. Silence reads as ignoring the reviewer.
+- It's fine to push back with a reason ("kept it this way because X") — reviewers aren't always right, and a good one welcomes the pushback if it's substantive.
+- Resolve threads once addressed; leave them open if you want the reviewer to confirm.
+
 ## Command Examples
 
 ### The full loop, solo, on your own repo
@@ -150,3 +177,7 @@ Not required — the web UI is fine — but many professionals live in `gh`.
 4. **Fork a real project.** Fork any small public repo (even a docs/awesome-list repo), clone your fork, add the `upstream` remote, make a genuinely tiny improvement on a branch, push to your fork, and open a PR *at least as far as the creation screen*. (Submitting for real is a stretch goal — see Project 4.)
 
 5. **Write a review checklist.** From Chapters 2–8, draft a 6–10 item personal checklist for reviewing any PR (e.g., "diff contains only intended files," "no leftover conflict markers," "message explains why"). Commit it to your workspace repo — via a PR, naturally. You'll use it in Project 4.
+
+6. **Review a stranger's PR from the outside.** Pick a real, already-merged PR on a popular open-source repo (small-to-medium size — a few files, not a thousand-line refactor). Read only the PR description and diff first — no scrolling to the actual review comments yet. Write the review you would have left: pick a verdict (comment / approve / request changes), and write out your actual line comments, marking each blocking or nit. Then reveal the real review comments and compare: what did the real reviewers catch that you missed, what did you flag that they didn't, and did you land on the same verdict?
+
+7. **Verdict judgment calls.** For each scenario, write one sentence naming the verdict you'd give and why: (a) the change works but renames a widely-used function with no updated docs; (b) a one-line typo fix with an otherwise perfect diff; (c) a new feature with no tests touching a payments code path; (d) code you'd have written differently but that is correct, tested, and matches the PR's stated goal.

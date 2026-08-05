@@ -6,6 +6,8 @@ Things go wrong. Users type garbage, networks fail, data arrives in unexpected s
 
 JavaScript's tools for this are `try`/`catch`/`finally`, the `throw` statement, the built-in `Error` types, and custom error classes. Solid error handling separates hobby scripts from professional code — and it becomes *essential* once you start fetching data from APIs (Chapter 16).
 
+This chapter also introduces **breakpoint debugging** — a more powerful alternative to `console.log` for tracking down *why* something went wrong in the first place.
+
 ## Definitions & Explanations
 
 ### What is an exception?
@@ -81,6 +83,18 @@ Two respectable strategies for a function that can fail:
 2. **Return a marker** — `null`, `undefined`, `-1`, or a result object like `{ ok: false, error: "..." }` — for *expected*, routine failures (e.g., "search found nothing").
 
 Rule of thumb: expected outcomes → return values; broken contracts and impossible states → throw.
+
+### Debugging with breakpoints
+
+`console.log` is great for a quick check, but it means editing code, guessing in advance what to print, and re-running. **Breakpoints** let you pause a running program at an exact line and inspect *everything* in scope — no code changes required.
+
+- **Setting a breakpoint**: in DevTools (Chapter 1), open the **Sources** tab, find your file, and click the line number. Execution pauses there the next time that line runs.
+- **Stepping**: **Step over** runs the current line without diving into function calls it makes; **Step into** follows the call into the function; **Step out** finishes the current function and pauses back in its caller.
+- **Watch expressions**: pin any expression (`user.name`, `total > 100`) in the Watch panel — DevTools re-evaluates it every time execution pauses, so you don't have to retype it.
+- **The `debugger;` statement**: write `debugger;` directly in your code. If DevTools is open, execution pauses there exactly like a manual breakpoint — handy for pausing deep inside logic you can't easily click a line number for (e.g., inside a loop, on a specific iteration). Remove it before shipping.
+- **Call stack**: while paused, the Call Stack panel lists the chain of function calls that led here — invaluable for "how did execution even reach this line?"
+
+**When breakpoints beat `console.log`**: bugs that depend on the *full state* at one moment (many variables, not just one you thought to log), bugs inside loops or recursive calls where you'd need dozens of log lines, and situations where you don't yet know what value is even worth printing. `console.log` still wins for quick one-off checks and for watching a value change across many calls over time — a timeline breakpoints don't give you as naturally.
 
 ## Code Examples
 
@@ -308,3 +322,5 @@ try {
 4. **Cleanup guarantee.** Write a function that simulates a "loading" state: log `"loading started"`, then run a callback that may or may not throw, and — using `finally` — always log `"loading finished"` afterwards. Demonstrate both the success path and the failure path.
 
 5. **Validator suite.** Write `validateProfile(profile)` that checks: `name` is a non-empty string, `age` is a number 13–120, `email` contains `"@"`. Instead of stopping at the first problem, collect *all* failures into an array; if any exist, throw one `ValidationError` whose message joins them with `"; "`. Show a caller printing the combined message.
+
+6. **Breakpoint hunt.** Take your `getQuantity`/`handleAddToCart` functions (or the Validator suite above) and deliberately introduce a subtle bug — e.g., an off-by-one in the range check. Instead of adding `console.log` calls, set a breakpoint on the first line of the function in DevTools Sources, reload, and use step over/into plus a watch expression on the input variable to find the bug. Then add a `debugger;` statement inside the loop of a function that processes an array, and step through one iteration at a time.

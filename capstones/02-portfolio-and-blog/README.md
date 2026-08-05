@@ -154,6 +154,9 @@ becomes a credential instead of a folder on your laptop.
 - [ ] Log into your admin panel **on the live site** and publish your two posts for
       real. Not seeded, not inserted by hand into the database — published through
       the front door, using the thing you built.
+- [ ] Run an automated accessibility audit (axe DevTools or Lighthouse) on every
+      public page, fix what it finds, and note the audit and its results in the
+      README.
 - [ ] Send the URL to one real person and watch them use it. Fix the first
       confusing thing they hit.
 
@@ -203,6 +206,12 @@ Nudges, not answers. Reach for these when you are stuck or about to over-build.
   palette in Phase 1, write it down, and declare visual changes out of scope until
   after the Definition of Shipped is fully checked. Shipped-and-plain beats
   gorgeous-and-local every single time, and you can restyle a live site forever.
+- **Automated accessibility scans catch maybe a third of real issues.** axe and
+  Lighthouse are great at finding missing alt text, low-contrast colors, and
+  unlabeled form fields — but they cannot tell you whether a keyboard user can
+  actually get through your site. Also tab through every page using only the
+  keyboard: can you reach every link and button, is focus always visible, and
+  does the order make sense?
 - **When you get stuck in Phase 4, it is almost always environment variables or
   DNS.** Check what the production process actually sees (log the presence — never
   the value — of each required variable at startup), and remember DNS changes can

@@ -231,6 +231,18 @@ System.out.println(a.equals(b));   // ✅ true — compares values
 
 More on `==` vs `.equals()` in Chapters 6 and 8 — it's Java's most classic trap.
 
+### 7. Closing `Scanner(System.in)` closes stdin
+
+```java
+Scanner scanner = new Scanner(System.in);
+String line1 = scanner.nextLine();
+scanner.close();                           // ❌ closes System.in — program cannot read again!
+
+Scanner scanner2 = new Scanner(System.in); // ✅ scanner2 will FAIL — System.in is closed
+```
+
+A `Scanner` wraps an input stream. When you close a `Scanner` that wraps `System.in`, you close `System.in` itself for the entire program — any subsequent attempt to read from `System.in` (or create a new Scanner on it) will fail. In small console programs, either close once at the very end of `main`, or don't close at all. Never close and reopen.
+
 ## Practice Exercises
 
 1. **Type census.** Declare one variable of each of the eight primitive types plus a `String`, give each a sensible value, and print them all with labels. Try assigning a wrong-typed value to each and note the compile errors.

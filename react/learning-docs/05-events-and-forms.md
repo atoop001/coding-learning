@@ -42,6 +42,15 @@ Always handle submission on the `<form>`'s `onSubmit` (not the button's `onClick
 - Keep an `errors` object in state, typed as `Partial<Record<FieldName, string>>`.
 - Only show a field's error after it's been *touched* (blurred once) or after a submit attempt — nagging users about a field they haven't reached yet is bad UX.
 
+### Accessibility basics
+
+Accessibility (a11y) isn't a separate feature bolted on later — for the events and forms in this chapter it's mostly a byproduct of using the right element for the job:
+
+- **Semantic elements over `<div onClick>`.** A `<button>` is focusable, keyboard-operable (Enter/Space fire it), and announced correctly by screen readers, all for free. A `<div onClick={...}>` gives you none of that — you'd have to bolt on `tabIndex={0}`, `role="button"`, and an `onKeyDown` handler for Enter/Space just to match what `<button>` already does natively. Default to the native interactive element (`button`, `a`, `input`, `select`); reach for ARIA roles only when no native element fits.
+- **Every input needs a label.** Either wrap the input in a `<label>` (as this chapter's examples do) or pair an explicit `htmlFor`/`id`. An input with only a `placeholder` is not labeled — screen readers don't treat placeholder text as a label, and it vanishes the moment the user starts typing.
+- **Keyboard reachability.** Every interactive element — buttons, links, form controls, custom widgets — must be reachable via Tab and operable without a mouse. If you can't complete a form using only Tab, Shift+Tab, Enter, and Space, something's wrong: a missing `tabIndex`, a click-only handler, or a non-interactive element pretending to be a control.
+- **`getByRole` as a free audit.** Chapter 13's Testing Library queries (`getByRole('button', { name: /save/i })`) only find elements with an accessible role and name — the same information a screen reader relies on. If you can't query your component by role or label text, that's usually a sign a real assistive-tech user can't operate it either.
+
 ## Code Examples
 
 ### Controlled text input, minimal
@@ -235,3 +244,4 @@ function SearchBox({ onSearch }: SearchBoxProps) {
 3. Extend the Signup example with a `password` + `confirmPassword` pair and a derived "passwords match" validation shown only after both fields are touched.
 4. Build a pizza order form: size (radio group), toppings (checkbox group stored as `string[]`), quantity (number), delivery notes (textarea, max 200 chars with live count). Log a fully typed order object on submit.
 5. Rewrite exercise 4's submission using the uncontrolled approach — `FormData` in the submit handler, no per-field state — and write two sentences on when you'd prefer each style.
+6. Pick a component from a project you've already built (or one of this chapter's examples). Unplug your mouse and try to complete its main task using only Tab, Shift+Tab, Enter, and Space. Note every place you got stuck, and fix at least one.

@@ -35,6 +35,7 @@ All of them, materially:
 - [ ] Vite + TypeScript, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax` — all passing via a `check` script
 - [ ] ESLint with `typescript-eslint` type-checked preset; zero errors, zero `eslint-disable` without a justifying comment
 - [ ] Layered modules with explicit boundaries: `domain/` (types + pure logic), `storage/`, `api/`, `ui/`, `router/` — UI imports domain, never the reverse; `import type` used consistently
+- [ ] A GitHub Actions workflow (`.github/workflows/`) that runs on every push: install deps, `tsc --noEmit`, and the Vitest suite — the build fails if either fails (Pitfall 7 from Chapter 12, enforced instead of just known)
 
 ### Domain modeling
 - [ ] A canonical item type with at least 7 fields including: a literal-union status (e.g., `"wishlist" | "owned" | "in-progress" | "finished"`), a rating, tags, timestamps
@@ -75,6 +76,7 @@ All of them, materially:
 - For `FieldErrors`, a mapped type over your form's keys (`Partial<Record<keyof FormState, string>>`) keeps error rendering typo-proof.
 - When the render-everything-on-change approach from Project 5 starts hurting at this scale, contain it: render per-region (header/main), and note the pain in your README — it's your best "why frameworks?" interview answer.
 - Budget real time for the corrupted-storage requirement. Migration/validation of persisted data is disproportionately valuable experience — it's most of what "senior" data handling looks like.
+- For the CI workflow: a GitHub Actions workflow file needs a trigger (`on: push`), a job with a runner (`runs-on: ubuntu-latest`), and steps that check out the repo, set up Node, install deps, then run your `check` script and your test script — in that order, so a type error fails fast before tests even start. GitHub's own "Building and testing Node.js" quickstart docs show the exact anatomy; adapt it rather than inventing one from scratch.
 
 ## Stretch Goals
 

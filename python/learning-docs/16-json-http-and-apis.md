@@ -38,6 +38,8 @@ JSON has **no** tuples, sets, comments, or trailing commas; keys must be strings
 
 **API keys** — many APIs require a token identifying you, passed as a query parameter or a header. Treat keys like passwords: don't hardcode them into shared code — read them from an environment variable (`os.environ`) or an untracked config file.
 
+**`.env` files for local development** — setting `WEATHER_API_KEY` by hand in every new terminal gets old fast. The standard local-dev pattern: put your real keys in a `.env` file in the project root (`API_KEY=REPLACE_ME`, one `KEY=value` per line, no quotes needed), add `.env` to `.gitignore` so it never reaches version control, then load it with the third-party `python-dotenv` package (`pip install python-dotenv`) so those variables land in `os.environ` automatically at startup. Commit a `.env.example` alongside it with obvious placeholder values (`API_KEY=REPLACE_ME`) so teammates — and future you — know what's needed without ever seeing the real secret.
+
 **The `requests` library** — the de-facto standard HTTP client (`pip install requests` — in a venv, per Chapter 10!):
 
 - `r = requests.get(url, params={...}, timeout=10)`
@@ -83,7 +85,7 @@ from pathlib import Path
 
 DATA_FILE = Path(__file__).parent / "contacts.json"
 
-def load_contacts():
+def load_contacts() -> list:
     """Return the saved list, or [] on first run / corrupt file."""
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
@@ -94,7 +96,7 @@ def load_contacts():
         print("Warning: contacts.json is corrupt — starting fresh.")
         return []
 
-def save_contacts(contacts):
+def save_contacts(contacts: list) -> None:
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(contacts, f, indent=2)
 
@@ -149,7 +151,7 @@ print(f"Temp: {current['temperature']}°C, wind {current['windspeed']} km/h")
 ```python
 import requests
 
-def fetch_json(url, params=None):
+def fetch_json(url: str, params: dict | None = None) -> dict | None:
     """GET JSON with proper error handling. Returns None on failure."""
     try:
         r = requests.get(url, params=params, timeout=10)
@@ -198,6 +200,27 @@ r = requests.get("https://api.example.com/data",
                  params={"appid": API_KEY, "q": "London"}, timeout=10)
 ```
 
+### Loading a `.env` file for local development
+
+```
+# .env  (in the project root — NOT committed; add it to .gitignore)
+WEATHER_API_KEY=REPLACE_ME
+```
+
+```python
+# pip install python-dotenv   (inside your venv)
+import os
+from dotenv import load_dotenv
+
+load_dotenv()      # reads .env and adds its keys to os.environ, if not already set
+
+API_KEY = os.environ.get("WEATHER_API_KEY")
+if not API_KEY or API_KEY == "REPLACE_ME":
+    raise SystemExit("Copy .env.example to .env and fill in a real WEATHER_API_KEY")
+```
+
+Real hosting platforms (Chapter 18's deployment stretch goal, and beyond) set environment variables through their own dashboard or config — `.env` is purely a local-dev convenience, which is exactly why it must never be committed.
+
 ## Common Pitfalls
 
 **1. Confusing `dumps/loads` direction** — mnemonic: **dump** your Python objects *out* to JSON; **load** JSON *in* to Python. The trailing `s` means you're working with a **s**tring instead of a file.
@@ -218,7 +241,7 @@ data = r.json()
 
 **5. Assuming response shape** — APIs change, fields go missing, error responses have different shapes than success responses. Use `.get()` with defaults for optional fields, and print the raw `r.json()` while developing to *see* the actual structure instead of guessing.
 
-**6. Hardcoding secrets** — an API key pasted in code ends up in screenshots and Git history forever. Environment variables from day one.
+**6. Hardcoding secrets** — an API key pasted in code ends up in screenshots and Git history forever. Environment variables from day one. And if you use a `.env` file, add it to `.gitignore` *before* the first commit — a key that reaches Git history is compromised even if you delete the file afterward.
 
 **7. Hammering an API in a loop** — a tight loop of requests gets you rate-limited (`429`) or banned. Cache what you can, and `time.sleep()` between calls when looping.
 

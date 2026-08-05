@@ -2,7 +2,7 @@
 
 ## Overview
 
-Everything you've learned transfers — that was the point of learning on SQLite. This final chapter maps your skills onto the wider world: what a **client-server database** like PostgreSQL changes, the concrete dialect differences you'll hit on day one, when each engine is the right choice, a working introduction to **ORMs** (how web frameworks actually talk to databases), and a tour of the ecosystem vocabulary (NoSQL, migrations, connection strings) that shows up in job postings and team conversations.
+Everything you've learned transfers — that was the point of learning on SQLite. This final chapter maps your skills onto the wider world: what a **client-server database** like PostgreSQL changes, the concrete dialect differences you'll hit on day one, when each engine is the right choice, a full treatment of **window functions** (the most interview-relevant SQL topic this track hasn't covered yet), a primer on **JSON columns**, a working introduction to **ORMs** (how web frameworks actually talk to databases), and a tour of the ecosystem vocabulary (NoSQL, migrations, connection strings) that shows up in job postings and team conversations.
 
 By the end you'll know exactly what to learn next — and you'll discover it's a short list, because you already have the hard parts.
 
@@ -43,11 +43,120 @@ Rule of thumb the industry actually follows:
 
 If you followed this track's best practices (strict GROUP BY, ISO dates, `COALESCE` over `IFNULL`, explicit types, parameterized queries), your habits are already Postgres-shaped.
 
+### Window functions — aggregate without collapsing rows
+
+*(Examples below reuse Chapter 7's `customers`/`orders` schema and data — recreate it if you don't still have it loaded.)*
+
+Every aggregate you've used so far (Chapter 7) works one way: `GROUP BY` collapses many rows into one summary row per group, and the individual rows are gone from the output. **Window functions** compute the same kind of aggregate — sums, ranks, running totals — but keep every row. Each row gets the aggregate value computed over a *window* of related rows attached to it as an extra column, side by side with its own data.
+
+```sql
+-- GROUP BY: 9 order rows go in, one row per customer comes out — detail is lost
+SELECT customer_id, SUM(amount_cents) AS total
+FROM orders
+GROUP BY customer_id;
+
+-- Window function: 9 order rows go in, 9 rows come out — each labeled with its
+-- customer's total, so you can still see the individual order alongside it
+SELECT customer_id, id AS order_id, amount_cents,
+       SUM(amount_cents) OVER (PARTITION BY customer_id) AS customer_total
+FROM orders;
+```
+
+Supported by SQLite 3.25+ and PostgreSQL. The general shape:
+
+```sql
+function(...) OVER (
+    [PARTITION BY expr, ...]   -- split rows into independent windows (like GROUP BY, but nothing collapses)
+    [ORDER BY expr, ...]       -- order rows within each window (required for ranking/running totals)
+)
+```
+
+- **`PARTITION BY`** divides rows into groups the same way `GROUP BY` does, but each group's rows all stay in the output — the function just resets at each partition boundary. Omit it and the whole result set is one window.
+- **`ORDER BY`** *inside* `OVER (...)` is independent of any `ORDER BY` at the end of the query — it defines the sequence the window function walks in (which row is "first," what "running" means), not the final row order of the result.
+
+**Ranking functions** — the three you'll use constantly, all requiring `ORDER BY` inside `OVER (...)`:
+
+| Function | Behavior on ties | Example ranks for values `[100, 90, 90, 70]` |
+|---|---|---|
+| `ROW_NUMBER()` | no ties possible — arbitrary tiebreak, always unique | 1, 2, 3, 4 |
+| `RANK()` | ties share a rank; **leaves a gap** afterward | 1, 2, 2, 4 |
+| `DENSE_RANK()` | ties share a rank; **no gap** afterward | 1, 2, 2, 3 |
+
+```sql
+SELECT customer_id, id AS order_id, amount_cents,
+       ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount_cents DESC) AS rn,
+       RANK()       OVER (PARTITION BY customer_id ORDER BY amount_cents DESC) AS rnk,
+       DENSE_RANK() OVER (PARTITION BY customer_id ORDER BY amount_cents DESC) AS drnk
+FROM orders
+ORDER BY customer_id, amount_cents DESC;
+```
+
+**Running totals** — an aggregate with `ORDER BY` inside `OVER (...)` (and no `PARTITION BY`, or one that groups the rows you want a running figure within) defaults to a frame of "everything from the start of the window through the current row," which is exactly a running total:
+
+```sql
+-- Running total of all revenue, order by order
+SELECT id, order_date, amount_cents,
+       SUM(amount_cents) OVER (ORDER BY order_date) AS running_total_cents
+FROM orders
+ORDER BY order_date;
+
+-- Running total *per customer* — combine PARTITION BY and ORDER BY
+SELECT customer_id, id AS order_id, order_date, amount_cents,
+       SUM(amount_cents) OVER (PARTITION BY customer_id ORDER BY order_date) AS customer_running_total
+FROM orders
+ORDER BY customer_id, order_date;
+```
+
+**The classic pattern: top N per group / latest row per user.** This is the single most common real-world use of `ROW_NUMBER()`, and it always follows the same shape — number the rows within each partition, then filter to the numbers you want in an outer query (window functions can't be filtered directly; see Pitfall 7):
+
+```sql
+WITH ranked_orders AS (
+    SELECT customer_id, id AS order_id, order_date, amount_cents,
+           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+    FROM orders
+)
+SELECT customer_id, order_id, order_date, amount_cents
+FROM ranked_orders
+WHERE rn = 1;   -- each customer's single most recent order
+```
+
+Change `ORDER BY order_date DESC` to `ORDER BY amount_cents DESC` and `WHERE rn = 1` to `WHERE rn <= 3` and you have "top 3 orders per customer by size" — the same pattern answers both "latest row per group" and "top N per group" questions that come up constantly in reporting and in interviews.
+
+### JSON columns — flexible fields without leaving SQL
+
+Sometimes a piece of data is genuinely sparse or shaped differently row to row — product attributes that vary wildly by category, a webhook payload you need to keep as-received, user preferences that grow over time. Modeling every possible attribute as its own column means constant `ALTER TABLE`s and a table that's mostly NULLs. That's when a JSON column earns its place. It is **not** a substitute for real columns: anything you filter, join, or aggregate on regularly, anything with integrity rules (`NOT NULL`, a `FOREIGN KEY`, `UNIQUE`), belongs in a proper typed column where constraints and indexes (Chapter 11) can do their job.
+
+```sql
+-- SQLite: JSON stored as TEXT, read with json_extract() (or the -> / ->> shorthand, 3.38+)
+CREATE TABLE products (
+    id         INTEGER PRIMARY KEY,
+    name       TEXT NOT NULL,
+    attributes TEXT   -- JSON: {"color": "blue", "size_ml": 750, "tags": ["outdoor","steel"]}
+);
+
+INSERT INTO products (name, attributes) VALUES
+    ('Water Bottle', '{"color":"blue","size_ml":750,"tags":["outdoor","steel"]}'),
+    ('Notebook',      '{"color":"black","pages":120}');
+
+SELECT name, json_extract(attributes, '$.color') AS color FROM products;
+SELECT name, attributes ->> '$.color' AS color FROM products;          -- same result, shorthand
+SELECT name FROM products WHERE json_extract(attributes, '$.size_ml') > 500;
+
+-- PostgreSQL: a real JSONB column, ->> returns text, -> returns jsonb
+CREATE TABLE products (
+    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name       VARCHAR(255) NOT NULL,
+    attributes JSONB
+);
+
+SELECT name, attributes ->> 'color' AS color FROM products;
+SELECT name FROM products WHERE (attributes ->> 'size_ml')::int > 500;
+-- Postgres can even index inside JSONB for fast lookups: CREATE INDEX ON products USING GIN (attributes);
+```
+
 ### Worth knowing exists (learn on demand)
 
-- **Window functions** — `ROW_NUMBER() OVER (PARTITION BY ...)`, running totals, rank-per-group. Supported by both SQLite (3.25+) and Postgres; the single most valuable "next SQL topic" for analytics and interviews.
 - **UPSERT** — `INSERT ... ON CONFLICT ... DO UPDATE` (both engines): insert-or-update in one atomic statement.
-- **JSON in the database** — Postgres `JSONB` columns with indexing; SQLite's `json_extract`. Flexible fields without abandoning relational structure.
 - **Full-text search** — Postgres `tsvector`, SQLite FTS5.
 - **NoSQL** in one paragraph: document stores (MongoDB), key-value caches (Redis), wide-column and graph databases trade relational guarantees (joins, constraints, ACID across entities) for flexible schemas or horizontal scale. The industry lesson of the 2010s: most applications are relational at heart — reach for NoSQL for specific problems (caching, unstructured documents, massive scale), not as a default. "Knows SQL" is the more employable phrase.
 
@@ -174,6 +283,12 @@ with psycopg.connect("postgresql://postgres:devpass@localhost:5432/mydb") as con
 
 **6. Putting credentials in code.** Connection strings contain passwords. They live in environment variables or `.env` files (gitignored!) — never committed to a repository. This is the database cousin of the SQL-injection rule: boring discipline, catastrophic when skipped.
 
+**7. Trying to filter on a window function result in `WHERE`.** Window functions are computed in the `SELECT` list, logically *after* `WHERE` runs (same evaluation-order problem as aggregates in Chapter 7) — so `WHERE rn = 1` right after a `ROW_NUMBER() OVER (...)` in the same query fails with "misuse of window function" (or picks up nothing sensible). Wrap the windowed query in a subquery or CTE and filter the outer query instead, exactly as the top-N-per-group pattern above does.
+
+**8. Confusing `RANK()` gaps for a bug.** `RANK()` deliberately leaves a gap after ties (`1, 2, 2, 4`) — that's standard "Olympic" ranking, not broken numbering. Reach for `DENSE_RANK()` when you want consecutive rank numbers with no gaps (`1, 2, 2, 3`), and `ROW_NUMBER()` when ties must not exist at all (e.g. picking exactly one "latest" row per group).
+
+**9. Forgetting `PARTITION BY` and getting one giant window.** Omitting `PARTITION BY` on a running total or rank means the whole result set is a single window — a "per customer" running total without `PARTITION BY customer_id` silently becomes a store-wide running total that keeps climbing across customer boundaries. If numbers look too large or ranks look global when you wanted per-group, check for a missing `PARTITION BY` first.
+
 ## Practice Exercises
 
 1. Translation drill: take your Chapter 5 pet-owners schema and rewrite the CREATE TABLE statements in PostgreSQL dialect — proper identity columns, BOOLEAN, TIMESTAMPTZ, NUMERIC where appropriate, VARCHAR limits. Annotate each changed line with why.
@@ -181,3 +296,7 @@ with psycopg.connect("postgresql://postgres:devpass@localhost:5432/mydb") as con
 3. Predict-then-verify: write down what each of these does in SQLite vs Postgres before testing what you can: (a) `SELECT '5' = 5;` (b) `SELECT name FROM pets GROUP BY species;` (c) `INSERT INTO pets (name) VALUES ('x')` where name is `VARCHAR(2)`; (d) `WHERE name LIKE 'b%'` against 'Biscuit'.
 4. Window-function taster (works in your existing SQLite!): using Chapter 7's orders data, write one query with `RANK() OVER (PARTITION BY customer_id ORDER BY amount_cents DESC)` to find each customer's largest order — then write the same result *without* window functions and compare effort.
 5. Research exercise (no code): pick the stack you're most likely to use for web development (e.g., Next.js + Prisma, or Flask + SQLAlchemy). Find its documentation and answer in a few sentences each: How does it define a schema? How are migrations run? Where does the connection string live? How do you drop down to raw SQL when needed? This produces your personal "what to learn next" map.
+6. Using Chapter 7's `orders` table, write a query that shows every order alongside a running total of revenue ordered by `order_date` — first for the whole store, then modified with `PARTITION BY customer_id` for a running total per customer. Explain in a comment why the two totals diverge.
+7. "Latest row per group": write a CTE using `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC)` that returns only each customer's most recent order (one row per customer). Then change it to return each customer's two most recent orders instead.
+8. Demonstrate the `RANK()` vs `DENSE_RANK()` gap yourself: insert one more order for Dev (customer 4) at `4500` cents (tying both existing 4500 rows), then run all three ranking functions `PARTITION BY customer_id ORDER BY amount_cents DESC` for that customer and explain, in your own words, why `RANK()` jumps from 2 straight to 4.
+9. Predict-then-verify: what happens if you write `SELECT customer_id, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount_cents DESC) AS rn FROM orders WHERE rn = 1;` directly (no CTE/subquery)? Run it, read the error, and fix it using the pattern from this chapter.

@@ -20,7 +20,7 @@ Advanced — 8–12 hours, sensibly spread over one to two weeks. Deploy early, 
 ## Requirements
 
 - [ ] Choose a backend of yours with a database dependency and at least a handful of tests (your Project 3/4 project is ideal — it arrives with CI and compose already). Confirm it honors the full config contract: platform-assigned port, all-interfaces binding, everything tunable via env vars, startup validation that names missing keys.
-- [ ] Pick a PaaS (Render, Railway, or Fly.io) *after* reading its current pricing page; record in your notes which free-tier gotchas (sleep-on-idle, database expiry, credit burn) apply to you and what you'll do about each.
+- [ ] Pick a PaaS (Render, Railway, or Fly.io) *after* reading its current pricing page — as of mid-2026, Render is the only one of the three with a real free tier (Railway and Fly.io now bill from the start); free tiers change, so verify before committing, and see capstones/README.md's "Keeping It Free" section for the maintained summary. Record in your notes which free-tier gotchas (sleep-on-idle, database expiry, credit burn) apply to you and what you'll do about each.
 - [ ] Provision a managed Postgres on the platform, same region as the service will use. Identify its internal vs external connection URLs and write one sentence on where each will be used.
 - [ ] Deploy a first working version — dashboard-driven, auto-deploy on, no pipeline yet. Milestone: your API answers requests at the platform URL. Do not proceed until it does; everything after builds on a working baseline.
 - [ ] Configure all secrets and config through the platform's environment store. The repo must contain zero production values — audit it (`git log` included) and state the result.
@@ -42,7 +42,7 @@ Advanced — 8–12 hours, sensibly spread over one to two weeks. Deploy early, 
 - One doorway into production: if deploys ever seem to happen twice or from nowhere, Chapter 8's auto-deploy-vs-pipeline pitfall is the checklist.
 - Free-tier sleep will make your uptime monitor's numbers weird (each probe may wake the service, or record slow responses). Deciding how to handle that tension — accept, pay, or tune probe interval — is a genuinely instructive judgment call; write down what you chose.
 - The rollback and backup drills feel skippable because everything works. They are the difference between this being a deployment and being *operations experience* — which is the phrase your résumé wants.
-- Budget honesty: this can be $0 on free tiers with the documented gotchas, or a few dollars monthly to remove them. Either is fine; knowing *why* you chose is the lesson.
+- Budget honesty: as of mid-2026, $0 is genuinely achievable — Render's free web service paired with a free Neon or Turso database, with the documented sleep-on-idle gotcha — or a few dollars monthly (Railway, Fly.io, or Render's paid Postgres) to remove the gotchas entirely. Either is fine; knowing *why* you chose is the lesson. Free tiers change — verify the current terms before you commit, and check capstones/README.md's "Keeping It Free" section if you want the maintained summary.
 
 ## Stretch Goals
 

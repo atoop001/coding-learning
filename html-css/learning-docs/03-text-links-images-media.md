@@ -2,7 +2,7 @@
 
 ## Overview
 
-Content is the point of the web, and this chapter covers the elements that carry it: paragraphs and inline text semantics, hyperlinks (the "H" in HTML), images, and audio/video. You'll learn the difference between absolute and relative URLs, how to write `alt` text that actually helps people, and how to embed media responsibly.
+Content is the point of the web, and this chapter covers the elements that carry it: paragraphs and inline text semantics, hyperlinks (the "H" in HTML), images (including a primer on SVG), and audio/video. You'll learn the difference between absolute and relative URLs, how to write `alt` text that actually helps people, and how to embed media responsibly.
 
 Master this chapter and you can build genuinely useful pages — everything after it is refinement.
 
@@ -75,6 +75,27 @@ Image formats, quickly:
 | WebP / AVIF | Modern replacements for both — smaller files, wide support |
 | SVG | Logos, icons, illustrations — vector, scales infinitely, tiny files |
 | GIF | Mostly legacy; use video for animation |
+
+### A quick SVG primer
+
+SVG (Scalable Vector Graphics) describes images as shapes and paths (math), not pixels — so it scales to any size with zero blur, and simple icons/logos are often just a few hundred bytes.
+
+Two ways to use one:
+
+- `<img src="icon.svg" alt="…" />` — treat it like any other image. Simple, cacheable, but you can't style its internals with your page's CSS.
+- Inline `<svg>…</svg>` directly in the HTML — heavier markup, but now it's part of the DOM: you can style it with CSS (`fill: currentColor` makes an icon inherit the surrounding text color) and animate it.
+
+Every SVG needs a `viewBox="minX minY width height"` — it defines the coordinate system the shapes are drawn in and is *why* the image scales cleanly at any size.
+
+```html
+<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+  <circle cx="12" cy="12" r="10" fill="currentColor" />
+</svg>
+```
+
+For a handful of icons, hand-writing paths like this is fine. For a whole icon set, reach for an icon library/font (e.g. an SVG sprite sheet or a package like Lucide) instead of collecting one-off paths — it's less to maintain.
+
+**Pitfall:** omit `viewBox` and the SVG stops scaling proportionally when you resize it with CSS/attributes — it may clip or distort instead. Always set it, even if `width`/`height` match it exactly.
 
 ### Figures with captions
 

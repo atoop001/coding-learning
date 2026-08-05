@@ -47,6 +47,7 @@ Build a browser for a public REST API — recommended: the PokéAPI, JSONPlaceho
 ### Quality
 - [ ] StrictMode on; the app behaves correctly with dev double-mounting (this is your missing-cleanup detector)
 - [ ] Stable keys from API ids; `npm run build` clean
+- [ ] Test one component's rendering and one user interaction with Vitest + Testing Library — e.g. the search input renders with its placeholder, and typing into it (via `user-event`) eventually shows results or triggers your mocked fetch. Chapter 13 covers the full setup and the async-testing patterns (`findBy*`, mocked `fetch`) in depth; borrow just enough of its "Testing a component like a user" example to get one interaction test running now
 
 ## Hints
 

@@ -33,6 +33,8 @@ C and C++ are memory-*unsafe*: these bugs compile fine and blow up at runtime �
 
 > **Mental model shift for Python/JS developers:** In Python, "who cleans up this object?" is not your problem — the GC finds unreachable objects eventually. In Rust, every value has exactly one *owner*, and the compiler knows precisely when that owner goes away, so it inserts the cleanup code at compile time. Same safety, zero runtime cost — but *you* must structure code so the compiler can prove it.
 
+There is an escape hatch: the `unsafe` keyword lets you opt out of some of these compile-time guarantees for the rare cases (raw pointers, FFI, certain low-level optimizations) where the compiler can't prove safety but you can. It is deliberately **out of scope for this track** — everything here is safe Rust, which is also almost everything you'll write day to day.
+
 ### Zero-cost abstractions
 
 Rust's iterators, generics, and closures compile down to the same machine code you'd write by hand in C. "You don't pay for what you don't use, and what you do use, you couldn't hand-code any faster." Contrast: a Python list comprehension is elegant but runs through the interpreter; a Rust iterator chain compiles to a tight loop.
@@ -94,6 +96,8 @@ Hello, Rust!
 ```
 
 Note what happened: you got a standalone `hello.exe`. No interpreter, no `node_modules`, no venv. You could copy that .exe to any Windows machine and it runs.
+
+**A note on macros:** you'll spend this whole track *using* macros — `println!`, `vec!`, `format!`, and others — recognizable by their trailing `!`. Writing your own with `macro_rules!` is a distinct, more advanced skill (metaprogramming: code that writes code) and is out of scope here. Using them well is all you need.
 
 ### The real way: cargo
 

@@ -4,7 +4,7 @@
 
 Text is everywhere in web development: usernames, search queries, URLs, error messages, HTML itself. JavaScript **strings** come with a large toolkit of built-in methods for searching, slicing, cleaning, and transforming text, and **template literals** (backtick strings) make building text from data pleasant instead of painful.
 
-You've been using strings since Chapter 1; this chapter makes you fluent: methods you'll reach for daily, how strings interact with arrays (`split`/`join`), and the immutability rule that trips up beginners.
+You've been using strings since Chapter 1; this chapter makes you fluent: methods you'll reach for daily, how strings interact with arrays (`split`/`join`), the immutability rule that trips up beginners, and a working-minimum introduction to regular expressions.
 
 ## Definitions & Explanations
 
@@ -73,6 +73,37 @@ Also, `word[0] = "H"` silently does nothing. To "modify" a string, build a new o
 ### Comparing strings
 
 `===` compares exactly, case-sensitively: `"Apple" === "apple"` is `false`. For case-insensitive comparison, lowercase both sides first. Alphabetical ordering uses `<` / `>` (by character code) or, better for human-friendly sorting, `a.localeCompare(b)`.
+
+### Regular expressions: a working minimum
+
+A **regular expression** (regex) is a pattern for matching text — useful for validation, searching, and replacing when plain string methods aren't precise enough. This is a *working minimum*: enough to read and write simple patterns confidently. For anything more elaborate, treat MDN's regex guide as the reference — don't try to memorize the whole syntax up front.
+
+**Literal syntax**: a regex is written between slashes, `/pattern/flags`. Common flags: `g` (global — find/replace *every* match, not just the first) and `i` (case-insensitive).
+
+**Character classes** — match one character from a set:
+- `[abc]` — any of a, b, or c; `[^abc]` — any character *except* those
+- `[a-z]`, `[0-9]` — ranges
+- Shorthands: `\d` (digit), `\w` (word character: letter/digit/underscore), `\s` (whitespace) — capitalized forms (`\D`, `\W`, `\S`) negate them
+- `.` — any character except a newline
+
+**Quantifiers** — how many times the preceding token repeats:
+- `*` — 0 or more, `+` — 1 or more, `?` — 0 or 1
+- `{3}` — exactly 3, `{2,4}` — between 2 and 4, `{2,}` — 2 or more
+
+**Anchors** — a position, not a character: `^` start of string, `$` end of string.
+
+**Groups**: `(...)` captures part of a match for reuse or extraction; `(?:...)` groups without capturing.
+
+**The methods you'll actually use**:
+- `regex.test(str)` — boolean: does the pattern match anywhere in `str`?
+- `str.match(regex)` — match details (or `null`); with the `g` flag, returns *all* matches as an array of strings
+- `str.replace(regex, replacement)` — like the string method, but pattern-based; needs the `g` flag to replace every match, not just the first
+
+```js
+console.log(/^\d{3}-\d{4}$/.test("555-1234"));      // true — simple phone pattern
+console.log("Order #4521 and #99".match(/#\d+/g));  // ["#4521", "#99"]
+console.log("2026-08-05".replace(/-/g, "/"));        // "2026/08/05"
+```
 
 ## Code Examples
 
@@ -193,7 +224,7 @@ console.log(slugify("  10 Tips for Learning JavaScript!  "));
 // "10-tips-for-learning-javascript"
 ```
 
-(Regular expressions — the `/.../` pattern above — are a large topic of their own; for now just recognize them as "pattern matching for strings.")
+That `/[^a-z0-9-]/g` is a regex: "any character that's NOT a lowercase letter, digit, or dash, globally" — see "Regular expressions: a working minimum" above for how to read patterns like this.
 
 ## Common Pitfalls
 
@@ -255,6 +286,16 @@ console.log(zip + 1);         // ❌ "070301"
 // are LOST as numbers, which is why zip codes should STAY strings.
 ```
 
+### 7. Greedy matching grabs more than you want
+
+```js
+const html = "<b>bold</b> and <i>italic</i>";
+console.log(html.match(/<.+>/)[0]);   // ❌ "<b>bold</b> and <i>italic</i>" — greedy: grabs from the FIRST < to the LAST >
+console.log(html.match(/<.+?>/)[0]);  // ✅ "<b>" — the `?` makes the quantifier lazy, stopping at the first match
+```
+
+Quantifiers (`+`, `*`, `{n,m}`) are greedy by default — they consume as much text as possible before backtracking to satisfy the rest of the pattern. Append `?` to a quantifier (`+?`, `*?`) to make it lazy instead.
+
 ## Practice Exercises
 
 1. **Mad libs.** Declare variables `adjective`, `noun`, and `verb`, then use one multi-line template literal to print a short 3-line story using all three at least once each.
@@ -266,3 +307,7 @@ console.log(zip + 1);         // ❌ "070301"
 4. **Word counter.** Given a paragraph string of your choosing, print: total word count, the longest word, how many words contain the letter "e", and the paragraph in "Title Case". Use `split`, array methods, and string methods together.
 
 5. **CSV parser.** Given `const data = "name,score\nada,92\nlinus,88\ngrace,95"`, split it into lines, then split each line by commas, and print a formatted table with padded columns and a total/average score row. (Hint: `"\n"` is the newline character; skip the header row when computing numbers.)
+
+6. **Validity checks.** Write three regexes and test them with `.test()`: a valid-looking US zip code (`12345` or `12345-6789`), a string containing only letters and spaces, and a hex color code like `#a1b2c3` (3 or 6 hex digits after `#`). Try each against at least one string that should pass and one that should fail.
+
+7. **Find and replace.** Given `const messy = "Contact:  john@x.com,   jane@y.com  ,bob@z.com"`, use a regex with `match` (global flag) to extract all email addresses into an array, then use a separate regex with `replace` to collapse every run of whitespace into a single space.

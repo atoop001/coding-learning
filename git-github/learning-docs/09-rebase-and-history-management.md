@@ -96,6 +96,16 @@ git rm --cached secrets.env     # remove from the INDEX only; file stays on disk
 
 (And if the file contained real secrets, removing it from the tip does **not** remove it from history — every old commit still contains it. Rotate the secret; history-scrubbing tools exist but rotation is the real fix.)
 
+### .gitattributes — repo-level file handling
+
+**`.gitattributes`** — a committed file (like `.gitignore`, but for *how* Git treats tracked files rather than *whether* it tracks them). The one entry worth knowing now:
+
+```gitattributes
+* text=auto
+```
+
+This tells Git to normalize line endings for every text file: LF in the repo (and on GitHub), converted to the platform's native ending on checkout. Chapter 1 had you set `core.autocrlf true` — that's a *personal, per-machine* config setting, easy to forget on a fresh clone or a teammate's machine. `.gitattributes` is committed *into the repo*, so the rule travels with the project and applies identically for everyone, regardless of anyone's local config. Prefer it for anything shared.
+
 ## Command Examples
 
 ### Updating a feature branch onto latest main

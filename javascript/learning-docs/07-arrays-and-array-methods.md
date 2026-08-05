@@ -6,6 +6,8 @@ Real programs juggle *collections*: a list of tasks, a cart of products, a feed 
 
 You already know loops (Chapter 5) and functions (Chapter 6); array methods combine both ideas: they are functions on arrays that take *your* function and apply it to every element.
 
+Near the end of the chapter you'll also meet `Map` and `Set` — two more built-in collection types, useful when arrays or plain objects aren't quite the right shape for the job.
+
 ## Definitions & Explanations
 
 ### Array basics
@@ -47,6 +49,34 @@ Modern style favors non-mutating methods — they make code easier to reason abo
 ### `sort` — powerful but tricky
 
 `sort()` sorts **in place** (mutates!) and, by default, compares elements **as strings** — so `[10, 2, 1].sort()` gives `[1, 10, 2]`. For numbers, pass a comparator: `arr.sort((a, b) => a - b)`. To sort without mutating, copy first: `[...arr].sort(...)` or use `arr.toSorted(...)` (newer).
+
+### Beyond arrays: `Map` and `Set`
+
+Arrays aren't the only built-in collection worth knowing.
+
+- **`Map`** — a collection of key/value pairs, like an object, but with three real advantages: **keys can be any type** (not just strings — objects, numbers, even functions), it tracks **`size`** directly, and it **iterates in guaranteed insertion order**. Prefer `Map` over a plain object when your keys aren't naturally strings, or when you need a reliable count or iteration order.
+- **`Set`** — a collection of **unique values**; adding a duplicate is silently a no-op. Prefer `Set` over an array when you need to de-duplicate a list or do fast membership checks: `set.has(x)` is roughly O(1), versus `array.includes(x)`, which scans the whole array (O(n)).
+
+Core API:
+
+```js
+const cache = new Map();
+cache.set("ada", { age: 36 });     // add/update
+cache.get("ada");                  // read → { age: 36 }
+cache.has("ada");                  // boolean
+cache.delete("ada");               // remove
+cache.size;                        // count — a property, not a method call
+for (const [key, value] of cache) { /* runs in insertion order */ }
+
+const seen = new Set([1, 2, 2, 3]); // dedupes immediately → {1, 2, 3}
+seen.add(4);
+seen.has(2);                        // true, O(1)
+seen.delete(1);
+seen.size;                          // 3
+[...seen];                          // spread back to an array when you need one
+```
+
+Both are iterable, so spread (`[...set]`) and `for...of` work directly — no `.entries()` gymnastics needed like with plain objects.
 
 ## Code Examples
 
@@ -167,6 +197,33 @@ console.log(["a", "b", "c"].join(" → "));           // "a → b → c"
 console.log([1, 2, 3, 4, 5].slice(1, 3));           // [2, 3] — end index excluded, original untouched
 ```
 
+### 7. `Map` and `Set` in practice
+
+```js
+// Counting votes with Map instead of a plain object
+const votes = ["yes", "no", "yes", "yes", "maybe"];
+const tally = new Map();
+for (const v of votes) {
+  tally.set(v, (tally.get(v) ?? 0) + 1);
+}
+console.log(tally);              // Map(3) { 'yes' => 3, 'no' => 1, 'maybe' => 1 }
+console.log(tally.get("yes"));   // 3
+console.log(tally.size);         // 3
+
+// De-duplicating a list of tags with Set
+const tags = ["js", "web", "js", "css", "web", "js"];
+const uniqueTags = [...new Set(tags)];
+console.log(uniqueTags);         // ["js", "web", "css"]
+
+// Fast membership check: banned usernames
+const banned = new Set(["troll99", "spammer"]);
+function isAllowed(username) {
+  return !banned.has(username);  // O(1) lookup, vs. banned.includes(username)
+}
+console.log(isAllowed("ada"));      // true
+console.log(isAllowed("troll99"));  // false
+```
+
 ## Common Pitfalls
 
 ### 1. Expecting `map`/`filter` to change the original
@@ -220,6 +277,20 @@ const hit = arr.find((n) => n > 100);    // undefined when nothing matches
 if (hit === undefined) console.log("No match found");
 ```
 
+### 6. Object references as `Map` keys aren't "structurally" equal
+
+```js
+const m = new Map();
+m.set({ id: 1 }, "first");
+console.log(m.get({ id: 1 })); // ❌ undefined — a DIFFERENT object, even though it looks the same
+
+// Map compares keys the way === compares objects: by reference/identity, not shape.
+// ✅ Keep a reference to the actual key object if you need to look it up again:
+const key = { id: 1 };
+m.set(key, "first");
+console.log(m.get(key));       // "first"
+```
+
 ## Practice Exercises
 
 1. **Playlist manager.** Start with `const playlist = ["Track A", "Track B"]`. Using mutating methods: add two tracks to the end, one to the front, remove the last one, and print the final list numbered `1.`, `2.`, ... (use `map` + `join`, or `entries`).
@@ -231,3 +302,7 @@ if (hit === undefined) console.log("No match found");
 4. **Grade book.** Given an array of `{ name, score }` objects (write 5 of your own), produce: the names of everyone scoring 80+, the class average via `reduce`, whether *anyone* failed (below 60) via `some`, and the top student via `reduce` — each as a separate chained expression.
 
 5. **Cash register.** Given `const transactions = [4.75, -2, 13.5, 8, -5.25, 20]` (negatives are refunds): compute total revenue (sum of positives only), total refunds, the final balance, and a formatted receipt line for each transaction like `"+ $4.75"` / `"- $2.00"` joined with newlines. Use only array methods — no `for` loops.
+
+6. **Unique visitors.** Given `const visits = ["u1", "u2", "u1", "u3", "u2", "u1"]`, use a `Set` to find how many *unique* visitors there were, and print them as a comma-separated string. Then, using a `Map`, count how many times each visitor appears (like the vote tally example) and print the visitor with the most visits.
+
+7. **Map vs. object.** Given an array of `{ key, value }` pairs where some `key`s are numbers and some are objects (e.g. `[{ key: 1, value: "a" }, { key: {}, value: "b" }]`), build a `Map` from them with `map.set(pair.key, pair.value)`. Try building the "same" thing with a plain object instead and explain in a comment why it breaks for the non-string keys.

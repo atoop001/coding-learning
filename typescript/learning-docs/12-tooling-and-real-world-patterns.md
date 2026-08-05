@@ -36,6 +36,8 @@ Worth enabling beyond `strict`:
 2. **Manual guards** — `unknown` + type guard functions (Chapter 6). Fine for small surfaces.
 3. **Schema validation** — a library like **Zod**: define a schema once, get *both* the runtime validator and the inferred static type (`z.infer`). The industry-standard answer; know its shape even if you haven't memorized its API.
 
+The same discipline applies to configuration, not just network responses: `process.env.ANYTHING` is typed `string | undefined` — Node has no idea which variables your deployment actually set — so treat startup config as a boundary too. Validate it once, at process start, into a fully-typed config object; fail fast with a clear error if something required is missing, rather than letting `undefined` leak into business logic and surface as a confusing crash minutes later.
+
 ### DOM typing essentials
 
 `lib.dom.d.ts` types the entire browser API. The recurring patterns: `querySelector` returns `Element | null` (handle the null; use the generic parameter or `instanceof` for specific elements); event handlers receive typed events but `e.target` is `EventTarget | null` (narrow it); `addEventListener("click", …)` infers `MouseEvent` from the event-name literal — a real-world payoff of literal types.
@@ -43,6 +45,14 @@ Worth enabling beyond `strict`:
 ### Migration strategy
 
 TypeScript is designed for *incremental* adoption: `allowJs` lets `.ts` and `.js` coexist; `checkJs` (or `// @ts-check` per-file) type-checks JS via inference + JSDoc; you convert file-by-file, loosest-config-first, tightening flags as the converted fraction grows. The anti-pattern is the big-bang rewrite; the pro move is strangling the JS gradually while the app keeps shipping.
+
+### Testing TypeScript with Vitest
+
+Vitest is the standard test runner for TS/Vite projects — native ESM, TS support with zero config (no `ts-jest` transform step), and a Jest-compatible API (`describe`, `it`, `expect`, `vi` for mocking). Install it as a dev dependency; a `vitest.config.ts` (or the `test` block inside `vite.config.ts`) points it at your test files, conventionally `*.test.ts` beside the source they cover.
+
+The reason typed testing matters beyond "tests exist": in a JS test suite, a fixture object silently drifting out of sync with the interface it represents is only caught when the test happens to exercise the drifted field. In a TS test suite, the *fixture itself* is compiler-checked against the interface — rename a field, add a required property, or narrow a union, and every stale fixture becomes a compile error before the test runner starts. Tests stop being just a runtime check; they're a second consumer of your types, and that consumer forces your interfaces to keep matching reality.
+
+Typed mocks work the same way: `vi.fn<SomeInterface["method"]>()` (pulling the signature straight off the interface or a `typeof` of the real function) means a mock's call signature is checked against the function it replaces — call it with the wrong argument types, or resolve the wrong shape, and TS objects at compile time, not just an assertion failing at runtime.
 
 ## Code Examples
 
@@ -163,6 +173,60 @@ async function getTodoValidated(id: number): Promise<TodoZ> {
 }
 ```
 
+### Environment variables: validating config at startup
+
+```ts
+// process.env.ANYTHING is `string | undefined` — Node can't know what
+// your deployment actually set. Treat it like any other external boundary.
+
+interface AppConfig {
+  readonly apiBaseUrl: string;
+  readonly port: number;
+  readonly logLevel: "debug" | "info" | "warn" | "error";
+}
+
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (value === undefined || value === "") {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+function loadConfig(): AppConfig {
+  const logLevel = process.env.LOG_LEVEL ?? "info";
+  if (!["debug", "info", "warn", "error"].includes(logLevel)) {
+    throw new Error(`Invalid LOG_LEVEL: ${logLevel}`);
+  }
+
+  return {
+    apiBaseUrl: requireEnv("API_BASE_URL"),       // e.g. "https://api.example.test"
+    port: Number(process.env.PORT ?? "3000"),
+    logLevel: logLevel as AppConfig["logLevel"],  // narrowed by the check above ↑
+  };
+}
+
+// Call ONCE at startup — fail fast beats a mystery crash three requests in:
+export const config = loadConfig();
+```
+
+```ts
+// The Zod version: one schema gives both validation and the static type —
+// same trade-off as the fetch boundary above.
+import { z } from "zod";
+
+const ConfigSchema = z.object({
+  API_BASE_URL: z.string().url(),
+  PORT: z.coerce.number().int().positive().default(3000),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+});
+
+// parse() throws a detailed, field-by-field error if anything required
+// is missing or malformed — exactly what you want at boot, not mid-request:
+export const env = ConfigSchema.parse(process.env);
+// env: { API_BASE_URL: string; PORT: number; LOG_LEVEL: "debug"|"info"|"warn"|"error" }
+```
+
 ### Type-aware linting catching what tsc can't
 
 ```ts
@@ -236,6 +300,89 @@ const total = legacyComputeTotal(order);
 // problem is fixed, so suppressions can't outlive their reason. 🎯
 ```
 
+### Vitest: a typed test, fixtures, and mocks
+
+```ts
+// npm install -D vitest
+// vitest.config.ts (or the `test` block in vite.config.ts):
+// import { defineConfig } from "vitest/config";
+// export default defineConfig({ test: { environment: "node" } });
+
+// src/pricing.ts
+export interface Order {
+  id: string;
+  items: { unitPriceCents: number; quantity: number }[];
+  discountPercent: number;
+}
+
+export function totalCents(order: Order): number {
+  const subtotal = order.items.reduce(
+    (sum, item) => sum + item.unitPriceCents * item.quantity,
+    0
+  );
+  return Math.round(subtotal * (1 - order.discountPercent / 100));
+}
+```
+
+```ts
+// src/pricing.test.ts
+import { describe, it, expect } from "vitest";
+import { totalCents, type Order } from "./pricing";
+
+// A typed fixture: `satisfies` checks the object against Order's shape
+// while keeping literal inference (handy if you narrow it further later).
+const baseOrder = {
+  id: "ord_1",
+  items: [{ unitPriceCents: 1000, quantity: 2 }],
+  discountPercent: 0,
+} satisfies Order;
+
+describe("totalCents", () => {
+  it("sums unit price * quantity with no discount", () => {
+    expect(totalCents(baseOrder)).toBe(2000);
+  });
+
+  it("applies a percent discount", () => {
+    const discounted: Order = { ...baseOrder, discountPercent: 10 };
+    expect(totalCents(discounted)).toBe(1800);
+  });
+});
+```
+
+```ts
+// Typed mocks: vi.fn<...>() types the mock's call signature.
+import { vi, expect, it } from "vitest";
+
+interface UserRepo {
+  findById(id: string): Promise<{ id: string; name: string } | null>;
+}
+
+it("greets a found user", async () => {
+  const findById = vi.fn<UserRepo["findById"]>();
+  //                 ^ signature pulled straight off the interface —
+  //                   the mock can't drift from the contract it stands in for.
+  findById.mockResolvedValue({ id: "u1", name: "Ada" });
+
+  const repo: UserRepo = { findById };
+  const user = await repo.findById("u1");
+
+  expect(user?.name).toBe("Ada");
+  expect(findById).toHaveBeenCalledWith("u1");
+});
+```
+
+```ts
+// How typing catches drift: rename a field on Order (unitPriceCents -> unitPrice)
+// and baseOrder above fails to compile — BEFORE any test runs:
+//
+//   Object literal may only specify known properties, and
+//   'unitPriceCents' does not exist in type 'Order'.
+//
+// A JS test suite would happily run the old fixture and either pass
+// wrongly (the field silently undefined, math coincidentally still working)
+// or fail at runtime with a far less specific message.
+```
+
 ## Common Pitfalls
 
 **Pitfall 1: `as User` on fetch results, believed to be a check.**
@@ -259,6 +406,9 @@ A repo with `strict: true` plus hundreds of `as any`, `!`, and suppressions is *
 **Pitfall 7: Skipping the "does it actually run?" check.**
 tsc passing means types are consistent, not that code is correct or even that the bundler/runtime config works (ESM/CJS mismatches, wrong `lib`, missing DOM types show up at run time). CI needs *both* `tsc --noEmit` and real execution (tests, a smoke run).
 
+**Pitfall 8: `as SomeType` on test fixtures.**
+Casting a fixture (`{ id: "1" } as User`) to dodge a compile error defeats the entire point of typed tests — the fixture no longer proves it matches the interface, and it silently rots the same way a JS fixture would. Build fixtures with `satisfies` (or a literal that genuinely matches the type) so the compiler keeps checking them; if the object won't compile, that's the test telling you the fixture — or the interface — is out of date.
+
 ## Practice Exercises
 
 1. **Flag safari.** Create a scratch project and write short snippets that compile with `strict: false` but error under: `noImplicitAny`, `strictNullChecks`, `strictPropertyInitialization`, and `noUncheckedIndexedAccess` (one snippet each). For each, state the runtime bug the flag pre-empted.
@@ -270,3 +420,7 @@ tsc passing means types are consistent, not that code is correct or even that th
 4. **Lint the invisible.** Set up typescript-eslint with `recommendedTypeChecked` in a scratch project. Write code triggering `no-floating-promises` and `no-unnecessary-condition`, confirm tsc alone accepts both, and fix each properly (not via disable-comments). Record the two rule names and what each caught.
 
 5. **Micro-migration.** Write (or grab) a 3-file vanilla-JS mini-project (e.g., a shopping list with storage helpers). Migrate it: `allowJs` wrapper config first, then convert leaf → middle → entry file, then ratchet to full `strict`. Keep a migration log: every error the compiler raised and whether it was a real latent bug or just missing type info. Finish with zero `any`, zero suppressions — and a working app.
+
+6. **Typed test suite.** Pick two pure functions from an earlier project (e.g., Project 2 or 3) and write Vitest tests for them: at least one `satisfies`-checked fixture, one edge case, and one typed mock (`vi.fn<...>()`) replacing a dependency the function takes as a parameter. Then deliberately rename a field on the underlying interface and note the exact compile error your fixture produces before you fix it.
+
+7. **Break it on purpose.** Take `getTodoChecked` above (or your own boundary function) and write Vitest tests that mock `fetch` with `vi.fn<typeof fetch>()`: one case with a well-formed response, and one with a malformed response that should throw. Confirm the malformed case is actually exercising your type guard — not passing by luck.

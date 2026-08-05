@@ -50,12 +50,9 @@ Using it should feel like a personal finance sidekick: entering an expense takes
 
 - [ ] A menu option writes `expenses_export.csv` via `csv.DictWriter` with a header row, and confirms the path written
 
-## Requirements notes
-
-Deleting/editing entries is *not* required (but see stretch goals) — the focus here is aggregation and persistence done well.
-
 ## Hints
 
+- Deleting/editing entries is *not* required (but see stretch goals) — the focus here is aggregation and persistence done well.
 - Grouping is the heart of this project: the `setdefault(key, []).append(...)` (or `dict.get`) grouping pattern from Chapter 8 powers the category, month, *and* budget reports. Write one generic helper `group_totals(expenses, key_function)` and reuse it — Chapter 6's function-as-value idea makes this elegant.
 - The month of an ISO date is just `date_string[:7]` — sometimes string slicing beats date libraries.
 - Keep *calculation* functions pure (take a list, return a dict/number) and *printing* functions separate. You'll thank yourself in Project 7 when you learn testing.

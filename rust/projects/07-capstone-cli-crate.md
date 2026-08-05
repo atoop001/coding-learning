@@ -15,7 +15,7 @@ The graduation project: design and build a complete, polished command-line appli
 
 ## Difficulty
 
-**Advanced — the hardest project in the track.** Estimated effort: **15–25 hours** over 2–3 weeks. Scope discipline is part of the assignment: cut features, not quality.
+**Advanced — the hardest project in the track.** Estimated effort: **25–40 hours** over 2–3 weeks. That's a realistic figure for someone fresh off Chapter 16 — treat it as a multi-weekend build, not a single sitting. Scope discipline is part of the assignment: cut features, not quality.
 
 ## Chapters Used
 

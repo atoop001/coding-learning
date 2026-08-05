@@ -30,7 +30,7 @@ A complete, self-paced path from "what is a database?" to designing, optimizing,
 | 13 | `13-views-and-stored-logic.md` | Views, triggers, where logic should live |
 | 14 | `14-null-handling-and-data-quality.md` | Three-valued logic, NULL patterns, auditing & cleaning dirty data |
 | 15 | `15-sql-from-code-python.md` | Python `sqlite3`, parameterized queries, SQL injection |
-| 16 | `16-postgresql-and-the-wider-ecosystem.md` | PostgreSQL, dialect differences, ORMs, migrations, NoSQL, what to learn next |
+| 16 | `16-postgresql-and-the-wider-ecosystem.md` | PostgreSQL, dialect differences, window functions, JSON columns, ORMs, migrations, NoSQL, what to learn next |
 
 ## Projects (`projects/`)
 
@@ -70,4 +70,4 @@ Faster or slower is fine — the ordering is what matters. Note the deliberate r
 - **After Project 2:** you can design small relational schemas and join across them without notes.
 - **After Project 4:** you can look at any spreadsheet and see the 3NF schema hiding inside it — a genuinely interview-ready skill.
 - **After Project 6:** you can build database-backed applications in Python with safe, parameterized SQL.
-- **After Project 7:** you own the vocabulary and the artifacts (schema, migrations, seeded data, tuned queries) of a working backend developer. Next steps from there are in Chapter 16: PostgreSQL hands-on, window functions, and the ORM of your chosen web stack.
+- **After Project 7:** you own the vocabulary and the artifacts (schema, migrations, seeded data, tuned queries) of a working backend developer, including window functions and JSON columns from Chapter 16. Next steps from there: PostgreSQL hands-on and the ORM of your chosen web stack.

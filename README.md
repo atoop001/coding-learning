@@ -38,6 +38,7 @@ folder with two subfolders:
 | `node-express/` | Back-end JavaScript — build real APIs with Node.js + Express |
 | `testing-debugging-security/` | Professional quality habits for every language |
 | `deployment-devops/` | Docker, CI/CD, and cloud — shipping projects to real URLs |
+| `ai-assisted-dev/` | Working with AI coding tools — verifying output, professional workflow, interviews |
 
 **Capstones**
 
@@ -59,7 +60,9 @@ finished the node-express track's database and auth chapters.
    alongside.
 4. **Specialize & ship** — `react/` (front-end jobs),
    `deployment-devops/` (put your projects on real URLs — now a baseline hiring
-   expectation), and `data-structures-algorithms/` (interview prep).
+   expectation), `data-structures-algorithms/` (interview prep), and
+   `ai-assisted-dev/` (how to use and verify AI coding tools — 2026 interviews
+   ask about this directly; its verification habits are worth skimming early).
 5. **Broaden** — `java/` **or** `csharp/` (they teach similar concepts — pick one
    first), and finally `rust/`, the hardest track, once you're confident.
 

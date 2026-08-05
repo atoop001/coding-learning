@@ -35,6 +35,8 @@ Last chapter you ran other people's images; now you'll produce your own. A **Doc
 
 **Non-root user** — processes in containers run as root by default; if the app is compromised, the attacker is root *in the container*, which is a better position than you want to give them. Production-grade Dockerfiles switch: `USER node` (the Node images ship a `node` user) or create one. Good habit to see now, adopt as you go.
 
+**Scanning images for vulnerabilities** — every image carries two attack surfaces: the base OS's packages and whatever dependencies you installed on top (`npm`/`pip` packages accumulate CVEs same as system libraries). Both keep accumulating *known* vulnerabilities over time as researchers find and disclose them — an image that built cleanly last month can have a new CVE against it today, with nothing about your code having changed. `docker scout cves <image>` is built into Docker Desktop — no extra install — and cross-references your image's packages against vulnerability databases, reporting findings by severity with a "fix available" flag. Trivy (`aquasecurity/trivy`) is the common open-source alternative, used the same way and the one you'll most often see wired into CI. Reading the output: triage Critical/High-with-a-fix-available first — that's your real to-do list; Low/Medium findings in a base layer you don't control (no fix published yet) are usually an acceptable, noted risk rather than something to chase. The habit that matters: scan before you ship, not just once at project setup — the same discipline as running tests before merging.
+
 ## Code Examples
 
 Containerizing a Node/Express app — the canonical form, with the reasoning inline:
@@ -95,6 +97,8 @@ The Python/Flask equivalent — same skeleton, different dialect:
 FROM python:3.12-slim
 # -slim over -alpine for Python: prebuilt wheels for packages with C extensions
 # (psycopg2, numpy, ...) target glibc; Alpine's musl can force slow source compiles.
+# 3.12 isn't magic — use whatever Python version is current-stable when you build;
+# check hub.docker.com/_/python for the latest -slim tag.
 
 WORKDIR /app
 
@@ -160,6 +164,13 @@ Size forensics, for when an image is mysteriously huge:
 docker history myapp:0.1.0   # per-layer sizes — the offending RUN/COPY jumps right out
 ```
 
+Scanning before you ship — either tool, same shape:
+
+```powershell
+docker scout cves myapp:0.1.0        # built into Docker Desktop, no install needed
+trivy image myapp:0.1.0              # common alternative, often used in CI instead
+```
+
 And the debugging move for builds that "succeed but the app won't start" — override the CMD and go look:
 
 ```powershell
@@ -187,6 +198,8 @@ docker run -it --rm myapp:0.1.0 sh
 6. **Using `npm install` instead of `npm ci` in images.** `install` may resolve versions differently over time and mutate the lockfile; builds stop being reproducible. Correction: in any automated/build context, `npm ci` — it installs exactly the lockfile or fails loudly. (Python's analog: pin versions in `requirements.txt` rather than installing loose latest.)
 
 7. **Chasing the smallest possible image before the correct one.** Alpine-everything, aggressive layer golf, distroless — and then a package fails to compile against musl and eats an afternoon. Correction: sane defaults first (`node:*-alpine` is safe; `python:*-slim` over alpine), multi-stage where there's a build step, and only optimize further with `docker history` evidence of an actual problem.
+
+8. **Scanning an ancient base image and giving up.** `docker scout`/Trivy against a base tag that's years stale returns a wall of Criticals with no fix available — because the vendor stopped patching that tag, not because the vulnerabilities are unfixable. Correction: bump the base image tag first (e.g., `node:18` → `node:22-alpine`); most of the list often disappears in that one move, and only then is it worth chasing what's left.
 
 ## Practice Exercises
 

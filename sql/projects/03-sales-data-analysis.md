@@ -21,7 +21,7 @@ Play the data analyst. Given a small e-commerce schema (customers, products, ord
 ### Setup
 - [ ] Schema: `customers` (id, name, city, signup_date), `products` (id, name, category, price in cents), `orders` (id, customer_id, order_date), `order_items` (order_id, product_id, quantity, unit_price_cents — the price *at time of sale*)
 - [ ] Proper PKs, FKs, and a composite key or uniqueness rule preventing duplicate product lines within one order
-- [ ] Seed: at least 15 products across 4+ categories, 20+ customers across several cities, 100+ orders over at least 12 months, 200+ order line items — use Chapter 8's recursive-CTE generation trick with `RANDOM()`, or write a small Python generator (Chapter 15 preview); hand-typing is not required
+- [ ] Seed: at least 15 products across 4+ categories, 20+ customers across several cities, 100+ orders over at least 12 months, 200+ order line items — hand-typing is not required. A small Python (or other language) generator script (Chapter 15 preview) is the default, equally-valid way to get there: loop, pick random customers/products/dates, build INSERT statements or executemany calls. If you enjoyed Chapter 8's recursive-CTE trick with `RANDOM()`, that's a perfectly good pure-SQL alternative — pick whichever route you'd rather practice
 - [ ] Include edge cases on purpose: customers with zero orders, at least one product never sold, order sizes from 1 to many items
 
 ### Core reports (one saved query each, commented with the business question)

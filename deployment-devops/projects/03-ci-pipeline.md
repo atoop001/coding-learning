@@ -25,6 +25,7 @@ Intermediate — 3–5 hours (more if the chosen project has no tests yet; writi
 - [ ] Add the status badge to the top of the README, pointing at the workflow's results on main.
 - [ ] Turn on branch protection for main: require the CI check to pass, and require changes to arrive via pull request. Prove both walls exist: attempt a direct push to main (expect rejection) and open a PR with a failing check (expect a blocked merge button). Screenshot or transcript both.
 - [ ] Merge at least two real changes through the full ceremony: branch → push → PR → checks green → merge. Solo, yes — the ceremony is the practice.
+- [ ] Enable Dependabot alerts and security updates for the repo (Settings → Security) — near-zero effort, and a visible good-practice signal on a public repo.
 - [ ] Ensure the workflow needs no secrets; if your tests currently require real credentials or a real database, decouple them for CI (fakes, or skip-with-reason) and note the Chapter 10 service-container approach as the future fix.
 
 ## Hints

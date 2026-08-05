@@ -47,6 +47,7 @@ Build "NoteSpace" — a multi-page notes application with real URLs: a notes lis
 - [ ] Provider nesting composed into one tidy `<AppProviders>` component
 - [ ] Every context consumer imports only the hook, never the context object
 - [ ] StrictMode clean, keys correct, `npm run build` passes, no `any`
+- [ ] Write a small Vitest test for whichever piece of theming or notes logic you consider most breakable — e.g. the notes reducer's tag-filter derivation, or `ThemeProvider`'s persisted-toggle behavior. Reducer/pure-logic pieces need no rendering; a context/component piece needs Testing Library's `render`. Chapter 13 formalizes the full stack and setup — treat this as a look-ahead using just its "Test setup" and "Testing a component like a user" sections
 
 ## Hints
 

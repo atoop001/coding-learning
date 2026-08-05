@@ -6,7 +6,7 @@ A structured gym session for branches and merges. In a throwaway repo simulating
 
 By the end, the words "CONFLICT (content)" should trigger a checklist in your head instead of adrenaline.
 
-## Difficulty
+## Difficulty & Estimated Effort
 
 **Easy-Medium (2/5).** Estimated effort: 3–4 hours. Best done in one or two sittings; the conflict drills (Part C) benefit from being done in a single focused block.
 

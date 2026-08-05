@@ -1,7 +1,7 @@
 {
   "version": 1,
   "project": "coding-language-learning",
-  "updated": "2026-07-24",
+  "updated": "2026-08-05",
   "milestones": [
     {
       "id": "M1",
@@ -127,6 +127,15 @@
         { "title": "Complete first half of projects", "done": false },
         { "title": "Read chapters 8-14 (trees, graphs, DP, interviews)", "done": false },
         { "title": "Complete remaining projects incl. capstone", "done": false }
+      ]
+    },
+    {
+      "id": "M18",
+      "title": "AI-Assisted Development track",
+      "steps": [
+        { "title": "Read chapters 1-3 (tools, verification, prompting)", "done": false },
+        { "title": "Read chapters 4-6 (professional workflow, skills, interviews)", "done": false },
+        { "title": "Complete all 3 exercises", "done": false }
       ]
     },
     {

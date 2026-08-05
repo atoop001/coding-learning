@@ -69,10 +69,10 @@ Memorize this shape. Every logging, timing, caching, authentication, and retry d
 ### Functions as values (warm-up)
 
 ```python
-def shout(text):
+def shout(text: str) -> str:
     return text.upper() + "!"
 
-def whisper(text):
+def whisper(text: str) -> str:
     return text.lower() + "..."
 
 speak = shout                      # assign the function itself — no ()
@@ -105,8 +105,8 @@ print(clicks(), clicks(), clicks())    # 1 2 3
 other = make_counter()                 # a fresh, independent closure
 print(other())                         # 1 — separate `count`
 
-def make_greeter(greeting):
-    def greet(name):
+def make_greeter(greeting: str):
+    def greet(name: str) -> str:
         return f"{greeting}, {name}!"
     return greet
 

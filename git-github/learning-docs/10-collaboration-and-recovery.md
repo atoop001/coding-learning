@@ -70,6 +70,11 @@ A **GitHub Release** wraps a tag with a title, release notes, and optional downl
 
 **GitHub Actions (orientation only)** — GitHub's automation platform. Workflow files in `.github/workflows/*.yml` say "when X happens (push, PR, schedule), run these steps on a fresh VM" — typically tests and linters on every PR (that's "CI"), deployments on merge. For now you only need to *recognize* it: the green ✓ / red ✗ beside commits and PRs is Actions reporting whether checks passed. Reading a failed check's log is a professional daily routine.
 
+**Local hooks & commit conventions (orientation only)** — two more pieces of the tooling landscape worth *recognizing*, not yet mastering:
+
+- **Git hooks** are scripts Git runs automatically at points like `pre-commit` or `pre-push`. Most teams don't hand-write them — they install a hook manager (**Husky** is the common one in JS projects) paired with tools like **lint-staged** (run linters/formatters only on staged files) or **gitleaks** (scan the diff for accidentally-committed secrets before they ever reach a commit). If a `commit` you expected to succeed instead prints tool output and refuses, a hook just did its job — read the message.
+- **Conventional Commits** is a message format some teams require: `type(scope): subject`, e.g. `fix(auth): handle expired token on refresh` or `feat(api): add pagination to /users`. Common types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`. The payoff is automation — changelogs and version bumps can be generated straight from commit history. If a repo's `CONTRIBUTING.md` or a rejected commit mentions this format, that's what it means.
+
 ## Command Examples
 
 ### Stash in anger

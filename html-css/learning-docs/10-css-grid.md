@@ -4,7 +4,7 @@
 
 CSS Grid is the first CSS system designed for **two-dimensional layout** — rows *and* columns at once. Where flexbox flows content along one line, grid lets you draw the whole page structure first (columns, rows, named regions) and then place content into it. Magazine layouts, dashboards, photo walls, page shells with sidebars — grid handles in a few lines what once required frameworks.
 
-Like flexbox: a **grid container** (`display: grid`) controls **grid items** (direct children). Learn the track model, the `fr` unit, placement by line numbers, `auto-fit`/`minmax` for automatic responsiveness, and named template areas.
+Like flexbox: a **grid container** (`display: grid`) controls **grid items** (direct children). Learn the track model, the `fr` unit, placement by line numbers, `auto-fit`/`minmax` for automatic responsiveness, named template areas, and subgrid for aligning nested grids to the parent's tracks.
 
 ## Definitions & Explanations
 
@@ -83,6 +83,16 @@ Grid uses the same alignment vocabulary as flexbox, doubled for two axes:
 - `justify-content` / `align-content` — align *the whole grid* within the container (matters when tracks don't fill it).
 - `justify-self` / `align-self` — per-item override.
 - `place-items: center;` — shorthand for both item alignments; `display: grid; place-items: center;` is the shortest perfect-centering recipe in CSS.
+
+### Subgrid: aligning nested grids to the parent
+
+Normally a grid item that's itself `display: grid` starts a brand-new, independent track layout — its rows/columns have no relationship to the parent grid's. That breaks alignment when, say, cards in a row each need their title/body/footer to line up across cards even though each card's content is a different length. `grid-template-columns: subgrid` (or `-rows`) fixes this: the nested grid reuses the parent's tracks instead of defining its own, so cell edges line up perfectly. It's well-supported in current browsers now.
+
+```css
+.row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.card { display: grid; grid-row: span 3; grid-template-rows: subgrid; }
+/* each .card's rows now align to the SAME row tracks as its siblings */
+```
 
 ### Auto-responsive grids: `auto-fit` + `minmax`
 

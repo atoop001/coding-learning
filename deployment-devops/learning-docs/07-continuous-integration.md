@@ -28,6 +28,8 @@ Here is a scene from every un-CI'd team in history: Friday afternoon, someone me
 
 **Branch protection** — repo settings (Settings → Branches → branch protection rules, or the newer Rulesets) that make main *enforce* CI: require status checks to pass before merging, require PRs (no direct pushes to main), optionally require reviews. This converts CI from advice into law: a red build physically cannot merge. Solo-project tip: protecting your own main and PR-ing your own changes is excellent job-behavior rehearsal.
 
+**Dependabot** — GitHub's built-in dependency bot, flipped on in Settings → Security (or the older "Security & analysis" tab): **alerts** flag dependencies with known vulnerabilities by reading your lockfile against a CVE database, and **security updates** go further, auto-opening a PR that bumps the vulnerable package to a patched version — which your CI workflow then proves safe before you merge it. Enabling both takes under a minute, costs nothing, and is exactly the kind of near-zero-effort, high-signal habit that shows on a public repo: a visitor sees Dependabot PRs appearing and getting merged promptly, and reads that as active, competent maintenance.
+
 **Matrix build (awareness)** — `strategy: matrix:` runs a job several times across variations (Node 20 *and* 22, Ubuntu *and* Windows). Library authors need this; app CI usually doesn't. Recognize it when you see it.
 
 **Contexts and expressions (`${{ ... }}`)** — the template syntax inside workflow YAML for reading values at run time: `${{ github.sha }}` (the commit being built), `${{ github.actor }}` (who pushed), `${{ secrets.MY_TOKEN }}` (Chapter 8's bread and butter), `${{ runner.os }}`. When a workflow needs to know something about *why it's running*, a context has it.

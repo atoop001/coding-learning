@@ -18,8 +18,8 @@ A self-paced track for going from "I can open a terminal" to genuine developer f
 | 3 | `learning-docs/03-managing-files-and-folders.md` | Create/copy/move/rename/delete — and the safety habits that prevent rm disasters |
 | 4 | `learning-docs/04-viewing-and-searching.md` | cat/Get-Content, head/tail, grep/Select-String, find/Get-ChildItem, wildcards vs regex |
 | 5 | `learning-docs/05-the-pipeline.md` | Pipes, redirection, chaining with && and \|\|, PowerShell objects vs Bash text |
-| 6 | `learning-docs/06-environment-and-configuration.md` | PATH demystified, environment variables, profiles, aliases and functions, fixing "command not found" |
-| 7 | `learning-docs/07-package-managers.md` | winget, npm, pip (+ venvs), apt preview, and the PATH implications of installing tools |
+| 6 | `learning-docs/06-environment-and-configuration.md` | PATH demystified, environment variables, profiles, aliases and functions, fixing "command not found", processes and ports |
+| 7 | `learning-docs/07-package-managers.md` | winget, npm, pip (+ venvs), apt preview, the PATH implications of installing tools, and HTTP requests from the terminal (curl, Invoke-RestMethod) |
 | 8 | `learning-docs/08-writing-scripts.md` | .ps1 scripts + execution policy, .sh scripts + shebang/chmod, variables, arguments, if, loops, exit codes |
 | 9 | `learning-docs/09-practical-automation.md` | Batch renaming, dated backups, dry runs, idempotency, Task Scheduler and cron, logging |
 | 10 | `learning-docs/10-wsl-and-remote.md` | Installing WSL, ssh and keys, scp, Linux file permissions, chmod/chown/sudo |

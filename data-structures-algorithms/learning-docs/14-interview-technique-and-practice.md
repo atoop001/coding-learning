@@ -49,6 +49,7 @@ Compressed from Chapters 5–13 — this table should feel like an index into th
 | Count ways / min cost / longest sequence with choices | DP — define the state first | 13 |
 | Hierarchical / sorted-order / range queries | Tree, BST | 9 |
 | Prefix search / autocomplete over many strings | Trie | 9 |
+| Grid/matrix traversal (islands, flood fill, regions) | Treat cells as graph nodes; BFS/DFS with 4-direction deltas (Ch. 11's islands example) | 11 |
 | O(1) ops at a specific position you hold | Linked list | 3 |
 
 When lost: (a) sort the input mentally and see what opens up; (b) ask "what would I precompute into a hash map?"; (c) solve size-3 by hand and generalize; (d) say your dead-end aloud — interviewers steer talkers, not statues.
@@ -69,7 +70,7 @@ When lost: (a) sort the input mentally and see what opens up; (b) ask "what woul
 **Weeks 6–8 — weak spots + DP.** Your log tells you what's weak. Add 8–10 DP problems (Chapter 13's recipe, every time).
 **Weeks 9+ — simulation.** 2–3 timed mock interviews weekly: 40-minute timer, talk aloud (yes, alone at your desk), no pauses, no docs. Trade mocks with a friend or use a mock platform; recording yourself once is worth ten articles about communication.
 
-**Platforms.** LeetCode (the standard — filter by topic; company lists if targeting a specific employer; the "NeetCode 150" list maps almost 1:1 onto this track's chapters), HackerRank (gentler ramp), Codewars (fluency reps), Pramp/interviewing.io (free-ish live mocks). Difficulty calibration: interviews at most companies live at LeetCode easy-medium; hards are rare and usually signal a specialized team.
+**Platforms.** LeetCode (the standard — filter by topic; company lists if targeting a specific employer; the "NeetCode 150" list maps almost 1:1 onto this track's chapters), HackerRank (gentler ramp), Codewars (fluency reps). For live mock interviews, Pramp and interviewing.io are examples as of this writing, not a guaranteed-current list — platforms in this space come and go, so search for "free mock technical interview platform" before committing to one. Difficulty calibration: interviews at most companies live at LeetCode easy-medium; hards are rare and usually signal a specialized team.
 
 ## Code Examples
 

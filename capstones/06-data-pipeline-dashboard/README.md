@@ -56,38 +56,6 @@ A quick self-check — you're ready if you can do these without much looking-up:
 
 If any of those feel shaky, spend an evening back in that track first — this project punishes shaky foundations by failing at 6 a.m. when you're not watching.
 
-## Choosing a Data Source
-
-Pick something you personally find interesting — you're going to look at this dashboard for months. Ideas, roughly in order of friction:
-
-| Source | Why it's good | Friction |
-|---|---|---|
-| **Weather history for your city (Open-Meteo)** | No API key required, generous limits, clean JSON. The best first choice. | Lowest |
-| Air quality (Open-Meteo AQ, OpenAQ) | Same ease, more socially interesting data | Low |
-| Currency or crypto rates | Numeric, frequent, easy to chart | Low |
-| GitHub stats of a favorite project (stars, issues, releases) | Official API, well documented | Low–medium |
-| A sports team's stats | Fun, seasonal patterns | Medium — check the API's terms carefully |
-| Local gas prices | Genuinely useful, unique | Medium–high — official APIs are rare; see below |
-
-### Play it straight: APIs, terms of service, and courtesy
-
-This part is not optional, and it's a professional habit rather than a legal technicality:
-
-- **Prefer official APIs over scraping — always.** An API is a published contract: the provider is telling you how they want to be accessed. Scraping HTML is fragile (it breaks when the page changes), often against the site's terms, and a bad look in an interview when you explain your architecture.
-- **Read the terms of service before you write a line of code.** Look specifically for: whether automated access is allowed, whether you may store and republish the data, and any attribution requirements. If the terms forbid what you're planning, pick a different source. There are plenty.
-- **Check `robots.txt`** if you're fetching anything that isn't a documented API endpoint. If it disallows the path, that's your answer.
-- **Respect rate limits — and stay far below them.** You're making one small request per scheduled run; there is no reason to ever be a burden. Set a descriptive `User-Agent`, don't retry in a tight loop, and if the API returns a 429, back off and let the next scheduled run try again.
-- **Attribute your source** on the dashboard and in the README. It's polite, often required, and makes your project look more professional, not less.
-
-If a source you love has no official API and scraping is your only option, choose a different source. The project is about the pipeline, not the data.
-
-### Questions to answer before committing to a source
-
-- Does it update at least daily? (Weekly data means a very slow feedback loop and a sparse dashboard.)
-- Is history *not* freely downloadable in bulk? If anyone can grab 10 years as a CSV, your accumulated copy is less special — still fine for learning, weaker as a differentiator.
-- Can you describe, in one sentence, what a single row of your cleaned table represents? ("One day of weather for one city.") If you can't, the source is too fuzzy.
-- Will you still care about this data in four months? Be honest — abandoned dashboards show their neglect.
-
 ## Phased Milestones
 
 Work the phases in order. Each phase produces something verifiable before the next begins.
@@ -191,6 +159,34 @@ Note the first box is a calendar requirement, not a code requirement — which i
 ## Hints
 
 Nudges, not answers. Reach for these when you're stuck, not before.
+
+- **Choosing a data source.** Pick something you personally find interesting — you're going to look at this dashboard for months. Ideas, roughly in order of friction:
+
+  | Source | Why it's good | Friction |
+  |---|---|---|
+  | **Weather history for your city (Open-Meteo)** | No API key required, generous limits, clean JSON. The best first choice. | Lowest |
+  | Air quality (Open-Meteo AQ, OpenAQ) | Same ease, more socially interesting data | Low |
+  | Currency or crypto rates | Numeric, frequent, easy to chart | Low |
+  | GitHub stats of a favorite project (stars, issues, releases) | Official API, well documented | Low–medium |
+  | A sports team's stats | Fun, seasonal patterns | Medium — check the API's terms carefully |
+  | Local gas prices | Genuinely useful, unique | Medium–high — official APIs are rare; see below |
+
+- **Play it straight: APIs, terms of service, and courtesy.** This part is not optional, and it's a professional habit rather than a legal technicality:
+
+  - **Prefer official APIs over scraping — always.** An API is a published contract: the provider is telling you how they want to be accessed. Scraping HTML is fragile (it breaks when the page changes), often against the site's terms, and a bad look in an interview when you explain your architecture.
+  - **Read the terms of service before you write a line of code.** Look specifically for: whether automated access is allowed, whether you may store and republish the data, and any attribution requirements. If the terms forbid what you're planning, pick a different source. There are plenty.
+  - **Check `robots.txt`** if you're fetching anything that isn't a documented API endpoint. If it disallows the path, that's your answer.
+  - **Respect rate limits — and stay far below them.** You're making one small request per scheduled run; there is no reason to ever be a burden. Set a descriptive `User-Agent`, don't retry in a tight loop, and if the API returns a 429, back off and let the next scheduled run try again.
+  - **Attribute your source** on the dashboard and in the README. It's polite, often required, and makes your project look more professional, not less.
+
+  If a source you love has no official API and scraping is your only option, choose a different source. The project is about the pipeline, not the data.
+
+- **Questions to answer before committing to a source:**
+
+  - Does it update at least daily? (Weekly data means a very slow feedback loop and a sparse dashboard.)
+  - Is history *not* freely downloadable in bulk? If anyone can grab 10 years as a CSV, your accumulated copy is less special — still fine for learning, weaker as a differentiator.
+  - Can you describe, in one sentence, what a single row of your cleaned table represents? ("One day of weather for one city.") If you can't, the source is too fuzzy.
+  - Will you still care about this data in four months? Be honest — abandoned dashboards show their neglect.
 
 - **Idempotency is a schema decision first, code decision second.** If your table has a uniqueness constraint on the natural key (say, `city + date`), duplicates are *impossible*, and your insert code just has to decide what to do on conflict — skip, or update. Look up your database's "upsert" (insert-or-update-on-conflict) support. Getting this guarantee from the schema is far more reliable than checking "does this row already exist?" in Python first, because the check-then-insert approach has a gap between the check and the insert.
 

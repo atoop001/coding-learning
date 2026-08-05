@@ -60,3 +60,7 @@ A comfortable pace is 2–3 chapters per week with every practice exercise attem
 - **Meet the checklist, then stop.** Stretch goals are optional; finishing beats gold-plating.
 - **Break things on purpose.** Half of debugging skill is having seen the error before.
 - Put your projects under version control with git from Project 3 onward — an employer-visible GitHub of Projects 5–8 *is* your junior portfolio.
+
+## Where This Track Ends and Others Begin
+
+This track deliberately stops at JSON-file persistence — even the capstone's SQLite stretch goal (Project 8) is optional, so the `sqlite3` standard-library module and real relational modeling are only lightly touched here. Before attempting that swap, or once you want to back a Python app with a proper database, work through the sibling `sql/` track — it covers schema design, joins, and SQL itself in depth and pairs naturally with what you've built here.

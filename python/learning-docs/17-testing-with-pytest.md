@@ -59,16 +59,16 @@ The test fails if the block *doesn't* raise that exception. Testing error paths 
 ```python
 """A tiny shopping-cart module — deliberately test-friendly."""
 
-def item_total(price, quantity):
+def item_total(price: float, quantity: int) -> float:
     if price < 0 or quantity < 0:
         raise ValueError("price and quantity must be non-negative")
     return price * quantity
 
-def cart_total(items):
+def cart_total(items: list[tuple[float, int]]) -> float:
     """items: list of (price, quantity) tuples."""
     return sum(item_total(p, q) for p, q in items)
 
-def apply_discount(total, percent):
+def apply_discount(total: float, percent: float) -> float:
     """Return total after an N% discount. Percent must be 0-100."""
     if not 0 <= percent <= 100:
         raise ValueError(f"percent must be 0-100, got {percent}")

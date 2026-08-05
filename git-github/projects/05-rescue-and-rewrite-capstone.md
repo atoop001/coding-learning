@@ -6,7 +6,7 @@ The final exam you give yourself. First you'll *manufacture a disaster site*: a 
 
 If Project 1 made undo boring, this one makes *catastrophe* boring. That calm is the capstone.
 
-## Difficulty
+## Difficulty & Estimated Effort
 
 **Hardest (5/5).** Estimated effort: 5–7 hours. Do Part B in one focused sitting if possible — mid-rescue is a bad place to lose your mental stack.
 

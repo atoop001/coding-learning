@@ -71,7 +71,7 @@ Root CA (in your browser's trust store, self-signed, heavily guarded)
                   └── signs → example.com's certificate  (what the server presents)
 ```
 
-- Certificates **expire** (typically ~90 days for Let's Encrypt, renewed automatically) and can be issued for one name, several names, or wildcards (`*.example.com`).
+- Certificates **expire** (typically ~90 days for Let's Encrypt, renewed automatically) and can be issued for one name, several names, or wildcards (`*.example.com`). The industry trend is toward even shorter lifetimes — options down to about **6 days** are rolling out — which only works at all because renewal is automated; the shorter the cert, the more the whole scheme depends on that automation never being forgotten.
 - **Let's Encrypt** made certificates free and automated in 2015, which is why the web went from mostly-HTTP to mostly-HTTPS in under a decade — and why your capstone deployment will get HTTPS without paying anyone.
 
 If any check fails — expired cert, name mismatch (cert says `example.com`, you asked for `exarnple.com`), or an untrusted signer — the browser throws the full-page warning you've seen (`NET::ERR_CERT_...`). That warning means "I cannot verify who you're talking to," which is exactly the condition an attacker impersonating a site would create. Take it seriously.
@@ -88,6 +88,15 @@ An HTTPS page that loads sub-resources (scripts, images, stylesheets) over plain
 - **Passive mixed content** (images, media): lower risk; browsers block or auto-upgrade these too in modern versions, and mark the page as not fully secure.
 
 Practical consequences you'll hit in real life: after deploying a site to HTTPS, any hard-coded `http://` asset URLs will break or warn. Fixes: use `https://` URLs, or better, relative/protocol-less paths. Related hardening you'll meet: **HSTS** (a header telling browsers "only ever contact me via HTTPS") and the automatic `http→https` redirect virtually every site runs (you captured one in Chapter 4's redirect exercise).
+
+### Other security headers, briefly
+
+HSTS isn't the only response header doing defensive work — you don't need to master these yet, just recognize them when `curl -i` shows them:
+
+- **`Content-Security-Policy` (CSP)** — tells the browser which *sources* are allowed to supply scripts, styles, images, etc. for this page, e.g. `Content-Security-Policy: script-src 'self'` permits scripts only from the page's own origin, blocking injected `<script>` tags from anywhere else — a major defense against XSS (Chapter 7).
+- **`X-Content-Type-Options: nosniff`** — stops the browser from guessing ("sniffing") a resource's type from its content instead of trusting the server's declared `Content-Type`; without it, a file uploaded as an "image" that's actually script can sometimes get executed.
+
+Worth a habit: `curl -i` any real site and skim its response headers for these — most large sites (GitHub, your bank) set several of them, most small ones set none.
 
 ## Hands-On Examples
 

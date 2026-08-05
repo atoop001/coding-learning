@@ -26,7 +26,7 @@ The same code has to behave differently in different environments: talk to a loc
 
 **Secret rotation** — replacing a secret with a new value and retiring the old one. Done on a schedule in mature orgs, and done *immediately* when a secret leaks. Rotation is the only real remedy for exposure — which is why systems are designed so secrets are *cheap to change*.
 
-**Secret scanning** — automated services (GitHub's push protection among them) that recognize credential formats in commits and block or alert. A safety net with holes in it — it knows famous formats, not your homegrown ones. Never a substitute for the gitignore discipline.
+**Secret scanning** — automated services (GitHub's push protection among them) that recognize credential formats in commits and block or alert. A safety net with holes in it — it knows famous formats, not your homegrown ones. Never a substitute for the gitignore discipline. **gitleaks** (or a **pre-commit** hook running it) is the local complement: it scans staged changes *on your machine, before a commit even happens*, catching a leak a full commit-cycle earlier than GitHub's server-side push protection — worth adding to any project once the gitignore habit is solid.
 
 **The leak playbook** — when a secret hits a public repo (or any untrusted place), in order: **(1) Rotate first.** Generate a new credential at the provider and revoke the old one — *this* is what ends the danger. **(2) Update** every environment that used it. **(3) Then clean up** the repo history if you like — but understand that once pushed publicly, scrapers have already seen it; history-scrubbing is hygiene, not remedy. **(4) Check for abuse** (provider usage dashboards, billing alerts). The classic mistake is doing (3) first and feeling safe.
 

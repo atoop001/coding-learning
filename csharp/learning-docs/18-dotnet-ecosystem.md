@@ -124,6 +124,51 @@ class Greeter : IGreeter
 
 Registration methods control **lifetime** — how long an instance lives before a new one is created. At an awareness level: `AddSingleton` creates one instance for the whole app's lifetime (good for stateless services or shared in-memory data, as in the capstone); `AddScoped` creates one instance per HTTP request (common once a database is involved); `AddTransient` creates a new instance every time it's requested (for cheap, stateless helpers). You'll default to `AddSingleton` for this track's projects and meet `AddScoped` once EF Core enters the picture.
 
+### CORS — letting a browser frontend call your API
+
+Browsers enforce the **same-origin policy**: JavaScript running on `http://localhost:5173` is blocked from calling `http://localhost:5000/tasks` unless the *server* explicitly says it's okay. That's **CORS** (Cross-Origin Resource Sharing) — an opt-in the server grants via response headers, not something the client can bypass. Every separate frontend (React, Vue, Blazor WASM on a different port) hitting this chapter's TaskApi needs it.
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendDev", policy =>
+        policy.WithOrigins("http://localhost:5173")   // your frontend's exact origin
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+var app = builder.Build();
+
+app.UseCors("FrontendDev");   // before the route mappings
+
+app.MapGet("/tasks", () => tasks);
+// ...
+app.Run();
+```
+
+### Configuration — appsettings.json and IConfiguration
+
+Real apps don't hardcode settings or scatter `Environment.GetEnvironmentVariable` calls — they use the built-in configuration system. A minimal API project template includes `appsettings.json` (base settings) and `appsettings.Development.json` (overrides applied only when `ASPNETCORE_ENVIRONMENT=Development`, the default while running locally). Read values through `builder.Configuration`, using `"Section:Key"` to reach nested JSON:
+
+```json
+// appsettings.json
+{
+  "ApiKey": "REPLACE_ME",
+  "Database": { "ConnectionString": "REPLACE_ME" }
+}
+```
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+string? apiKey = builder.Configuration["ApiKey"];
+string? connString = builder.Configuration["Database:ConnectionString"];
+```
+
+Environment variables are a higher-priority configuration source than the JSON files — setting an `ApiKey` environment variable overrides whatever `appsettings.json` says, with no code change needed. That's how real secrets reach the app: appsettings.json holds obvious placeholders like `"REPLACE_ME"` and gets committed to git; the actual key is supplied as an environment variable (or user-secrets locally) and never checked in.
+
 ### Where C# is used — picking your lane
 
 | Domain | Tech | Notes |
@@ -187,6 +232,10 @@ Console.WriteLine($"[{env}] data at {Path.GetFullPath(dataDir)}");
 **5. Tutorial paralysis.** The ecosystem is huge — Blazor! MAUI! Unity! — and it's tempting to sample everything shallowly. Employability comes from depth in one lane (recommendation: web APIs) with breadth added later.
 
 **6. Manually `new`-ing a service instead of letting the container inject it.** `app.MapGet("/hello", () => new Greeter().Greet())` works, but it bypasses DI entirely — you lose the ability to swap implementations (e.g. a fake for tests) and any lifetime management the container would have given you. If a service is registered with `builder.Services`, take it as a handler parameter and let the container supply it.
+
+**7. Wide-open CORS copied straight to production.** `policy.AllowAnyOrigin()` is tempting during development because it just works, but shipping it means *any* website can call your API from a user's browser. Name the real frontend origin(s) with `WithOrigins(...)` before deploying — treat `AllowAnyOrigin` as a local-only shortcut, not a default.
+
+**8. Real secrets committed in `appsettings.json`.** The file ships with your source control. Anything beyond an obvious placeholder (`"REPLACE_ME"`) in a committed `appsettings.json` is a leaked credential the moment the repo is pushed. Use environment variables or user-secrets for real values.
 
 ## Practice Exercises
 

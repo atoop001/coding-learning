@@ -77,5 +77,5 @@ All of them — most directly:
 - Sort controls on the task list (by due date, by created, by title) via query parameters
 - Flash messages ("Task added") using Flask's `flash`/`get_flashed_messages` — research required
 - Tests for the Flask routes themselves using Flask's built-in `test_client()` — research required, very employable
-- Swap JSON storage for SQLite via the standard-library `sqlite3` module, keeping `storage.py`'s function signatures identical — witness the payoff of layering: nothing else changes
+- Swap JSON storage for SQLite via the standard-library `sqlite3` module, keeping `storage.py`'s function signatures identical — witness the payoff of layering: nothing else changes (see the `sql/` track before attempting this — schema design and SQL itself aren't covered here)
 - Deploy it: run behind a production server (`waitress` on Windows) and access it from your phone on the same network

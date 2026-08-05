@@ -1,5 +1,7 @@
 # Chapter 14: NULL Handling & Data Quality
 
+> **Reading order note:** this track's README suggests studying this chapter right after Chapter 10, alongside Project 4, rather than strictly in file order — that's where NULL handling and data-quality auditing are needed most. It's safe to read any time after Chapter 10; nothing here depends on Chapters 11–13.
+
 ## Overview
 
 NULL has ambushed you in nearly every chapter: comparisons that silently match nothing, counts that differ, concatenations that vanish, `NOT IN` returning zero rows. This chapter finally gives NULL the full treatment — **three-valued logic**, every NULL-aware operator, and the query patterns that behave correctly — then widens out to practical **data quality**: finding and fixing duplicates, orphans, inconsistent formats, and out-of-range values in real tables. Real-world data is dirty; employers prize people who can audit and clean it with SQL.

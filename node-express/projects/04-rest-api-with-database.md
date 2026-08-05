@@ -75,3 +75,4 @@ Intermediate+ — 8–12 hours.
 - Add sorting (`?sort=createdAt&order=desc`) with a strict allowlist of sortable columns — this is the one place parameter binding can't save you, so understand why the allowlist is the defense.
 - Write a small seed script (`npm run db:seed`) that fills the database with realistic sample bookmarks for development.
 - Add a simple numbered migrations folder (`001-init.sql`, `002-add-notes-column.sql`) and a script that applies only the ones not yet applied, tracked in a `migrations` table.
+- Let a bookmark carry a cover image: add `POST /api/bookmarks/:id/image` using `multer` to save an uploaded file to local disk, validate that it's actually an image (check MIME type and extension, not just the field name) and reject anything over a size cap you choose; store the resulting file path on the bookmark row.

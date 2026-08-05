@@ -90,6 +90,8 @@ string json = JsonSerializer.Serialize(new Book("Dune", Status.Reading), options
 
 ### Async/await — the 80% you need now
 
+A quick note before diving in: this is a genuine shift in how you have to think, not just new syntax layered on familiar ideas — you're coming off three dense chapters (13–15), and now the *shape* of the code itself changes. It's normal for `async`/`await` to not click on the first pass; slow down here, and don't be surprised if you reread this section a couple of times before it settles. It's worth the friction — the capstone project's API endpoints are async throughout, and this is the chapter where that starts making sense.
+
 Reading a large file or calling a web API takes time. A **synchronous** call blocks the thread until done. An **`async` method returns a `Task`** — a promise of a future result (JS: literally `Promise`) — and **`await`** pauses *this method* (not the whole program) until the task completes:
 
 ```csharp

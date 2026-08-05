@@ -2,7 +2,7 @@
 
 ## Overview
 
-Python is one of the most widely used programming languages in the world, and it is the language behind a huge share of back-end web development, automation, data work, and scripting. It reads almost like English, which makes it an excellent first "serious" language — but it is not a toy. Companies like Instagram, Spotify, Netflix, and Reddit run large parts of their back-ends on Python.
+Python is one of the most widely used programming languages in the world, and it is the language behind a huge share of back-end web development, automation, data work, and scripting. It reads almost like English, which makes it an excellent first "serious" language — but it is not a toy. Companies like Instagram, Spotify, and Reddit run large parts of their back-ends on Python; Netflix leans on it heavily too, though more for internal tooling, data pipelines, and machine learning than for the consumer-facing back-end itself.
 
 This chapter gets your machine ready: installing Python on Windows, running code three different ways (the REPL, script files, and VS Code), and understanding what actually happens when you "run Python." Everything else in this track builds on the setup you do here, so take your time and verify each step works before moving on.
 

@@ -28,6 +28,8 @@ Everything so far has run on `localhost`, restarted by hand, watched by you in a
 
 - **Process manager** — software that keeps your Node process alive and restarts it on crash: `pm2` on a bare VM, or more commonly today the platform itself (Docker restart policies, systemd, Kubernetes, a PaaS). You'll meet these properly in the deployment-devops track; the takeaway now is that **your app should crash loudly on unrecoverable errors and let the manager restart it**, not limp along in a broken state.
 
+**What about work that shouldn't block a request?** (recognition level) Sending a welcome email, resizing an uploaded image, generating a report — none of that should make the client wait, and a slow third-party API in your request handler is a request your event loop can't use for anything else (Chapter 3). The general pattern is *respond now, do the slow thing async*: handle the request, kick off the work, and return a response immediately. How you "kick off the work" scales with need: `setImmediate`/`setTimeout(fn, 0)` is the naive version (fire it after the current response, no durability — it's gone if the process crashes first); a **jobs table** in your database plus an interval worker that polls for pending rows is the honest middle ground (durable, no new infrastructure, good enough for most side projects); and real **queues** like **BullMQ** (backed by Redis) are what production systems reach for once volume or reliability guarantees matter — retries, backoff, concurrency control, and visibility into what's stuck. You don't need to implement any of this now; just recognize the pattern name and know it exists for the day a request handler needs to do something slow.
+
 ## Code Examples
 
 ### From console.log to pino
@@ -74,6 +76,26 @@ app.get("/api/things", (req, res) => {
   res.json([]);
 });
 ```
+
+**Tying the request id to your logs.** Chapter 6 had you attach `req.id` to every request with a small middleware. Do that *before* `pinoHttp` and it's no longer just a header — `pino-http` picks it up automatically and gives every request a **child logger** (`req.log`) that has the id baked into every line it writes, so one request's log lines all correlate even when a hundred requests are interleaved in production:
+
+```js
+import crypto from "node:crypto";
+
+app.use((req, res, next) => {
+  req.id = crypto.randomUUID();          // Chapter 6's request-id middleware
+  next();
+});
+app.use(pinoHttp({ logger, genReqId: (req) => req.id })); // reuse it, don't generate a second id
+
+app.post("/api/bookmarks", (req, res) => {
+  req.log.info({ url: req.body.url }, "creating bookmark"); // this line and every
+  // other req.log line for THIS request carry the same req.id automatically
+  res.status(201).json({ ok: true });
+});
+```
+
+Without `genReqId`, pino-http generates its own id and you end up with two unrelated ids per request — wire them together instead.
 
 ### Graceful shutdown
 

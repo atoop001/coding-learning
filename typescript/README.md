@@ -52,6 +52,10 @@ Read chapters in order, doing the exercises as you go, and interleave projects a
 
 Rough overall pacing: 4–8 weeks at ~1 hour/day. Don't rush chapters 5–7; they carry the most weight per page.
 
+## Where the Rest of the Typed World Lives
+
+This track covers TypeScript itself — the language, the DOM, fetch, tooling, and testing — as a standalone skill, not tied to any framework. Two adjacent, framework-specific extensions live in their own tracks and aren't repeated here: typing React components, props, hooks, and JSX/TSX is covered in the `react/` track, and typing an Express server — request/response generics, middleware, route params — is covered in the `node-express/` track. Finish this track first; both of those assume everything here.
+
 ## Ground Rules for the Whole Track
 
 - `"strict": true` always. Projects 3+ also enable `noUncheckedIndexedAccess`.

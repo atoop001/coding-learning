@@ -64,6 +64,11 @@ Small, finished, shipped increments — every time.
 If a phase is taking far longer than expected, that is a signal to cut scope (see Hints), not
 to push harder on an oversized plan.
 
+Treat the 40-hour end of that range as a floor reached by people who cruised through the
+prerequisite tracks with no rework needed. Going well past 80 hours is normal, not a failure
+signal — ship phases, not the whole thing at once, and let the calendar stretch as long as it
+needs to.
+
 ## Prerequisites
 
 Complete these before starting. The capstone assumes them; it does not reteach them.
@@ -188,6 +193,9 @@ than after it.
   will see them; a spinner and a retry beat a frozen screen.
 - [ ] Make it work on a phone. Parents will book from their phones — walk the entire booking
   flow at a small viewport before calling this phase done.
+- [ ] Write an end-to-end test (Playwright or equivalent) covering the critical path: log in,
+  book a session, and verify it appears on the calendar. This becomes part of the test suite
+  Phase 4's CI wires up to run on every push.
 
 ### Phase 4: Ship It — Docker, CI, deployed, custom domain, HTTPS
 
@@ -292,6 +300,16 @@ one week, with the tutor's availability hardcoded in a config table, fully teste
 deployed, beats a half-built drag-and-drop scheduler every single time. Cut features
 ruthlessly; never cut tests, auth checks, or backups. Phase 5 exists precisely so features can
 arrive later, driven by real need instead of guesswork.
+
+**One end-to-end test buys you something your unit and API tests cannot.** Phase 2's tests
+prove the API behaves correctly in isolation; they never actually click a button or render a
+calendar. A single Playwright test that logs in through the real UI, books a real session
+through the real form, and asserts it shows up on the real calendar is the only check in your
+suite that proves the frontend and backend actually agree with each other — that the request
+shape the React app sends is the one Express expects, and the response shape Express returns is
+the one React can render. Keep it to one critical path; E2E tests are slow and brittle in bulk,
+so this is about coverage of the one flow that would be catastrophic to break silently, not
+about testing everything twice.
 
 **Commit small and write messages your future self can read.** This project will span weeks.
 "Fix stuff" tells you nothing in month two; "Reject bookings that overlap an existing session

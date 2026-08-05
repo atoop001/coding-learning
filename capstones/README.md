@@ -23,6 +23,11 @@ its own repo, linked from the spec's folder).
 | 6 | [Data Pipeline & Public Dashboard](06-data-pipeline-dashboard/README.md) | 25–40 h | python + sql + deployment-devops |
 | 7 | [Same App, Twice](07-same-app-twice/README.md) | 30–50 h | java OR csharp + a finished backend + testing-debugging-security |
 
+Deliberately absent from every "Start after" column: **data-structures-algorithms**
+(interview prep, not a project dependency), **how-the-web-works** (conceptual
+grounding that helps but never blocks), and **rust** (a stretch track). None of
+the three gates a capstone.
+
 ## Suggested Order
 
 1. **Capstone 2 (Portfolio & Blog)** first — the quickest to ship end-to-end,
@@ -32,14 +37,16 @@ its own repo, linked from the spec's folder).
 3. **Capstone 1 (Tutoring Platform)** is the north star — the flagship project
    with a real user and the strongest interview story. Start it once
    node-express, sql, and react are done; ship it in phases.
-4. **Capstone 4 (Open Source)** runs in the background alongside everything
-   else — review turnaround makes it a slow-burn project, so start early and
-   keep it simmering.
-5. **Capstones 5 and 6** deepen the backend and data sides — pick whichever
+4. **Capstones 5 and 6** deepen the backend and data sides — pick whichever
    excites you more; you don't need both before job applications.
-6. **Capstone 7 (Same App, Twice)** last — it requires a finished backend plus
+5. **Capstone 7 (Same App, Twice)** last — it requires a finished backend plus
    the Java or C# track, and it's the strongest proof that your skills
    transfer across languages.
+
+Meanwhile, in the background: start **Capstone 4 (Open Source)** early and keep
+it simmering alongside whichever numbered capstone you're on. Review turnaround
+on real pull requests makes it a slow-burn project, not a sequential step — it
+runs in parallel with everything above rather than waiting its turn.
 
 ## Keeping It Free
 

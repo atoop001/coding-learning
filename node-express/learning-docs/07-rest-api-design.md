@@ -41,6 +41,12 @@ The families matter as much as the numbers: **2xx** = success, **4xx** = the cli
 
 **An API contract** is the full agreement: endpoints, methods, request shapes, response shapes, status codes, error format. Designing the contract first — on paper — is the professional workflow, because changing paper is free and changing deployed APIs is expensive.
 
+**OpenAPI (formerly Swagger)** is the industry-standard way to write that contract down in a format both humans and tools can read — a YAML or JSON file (conventionally `openapi.yaml`) listing every endpoint, its parameters, request/response shapes, and status codes. Tools then generate interactive docs, client SDKs, and even test stubs from it, so the contract stays a single source of truth instead of a stale wiki page. You don't need to master the full spec now — even hand-writing an `openapi.yaml` for three endpoints teaches the vocabulary (`paths`, `schemas`, `responses`) that shows up in nearly every mid-to-senior backend job posting. The capstone project's stretch goals give you a chance to write one for real.
+
+**REST isn't the only API style.** **GraphQL** is the other one you'll meet in job postings: instead of many fixed endpoints, a GraphQL API exposes a single endpoint where the *client* specifies exactly which fields it wants in a query, and the server returns exactly that shape — no more, no less. This solves REST's two classic annoyances: **over-fetching** (a REST endpoint returns a whole object when you needed one field) and **under-fetching** (you need three REST calls to assemble one screen).
+
+The tradeoff: a single endpoint means HTTP-level caching and status codes stop doing much work, the server must guard against arbitrarily expensive client-constructed queries, and the tooling/mental-model investment is real. Most backend teams still default to REST for simple CRUD and reach for GraphQL when clients (especially mobile, with expensive round trips) need to shape their own responses. Recognition level for now — REST is what this track builds.
+
 ## Code Examples
 
 Less code in this chapter, by design — the deliverable of API design is a *table*, not code. Here is the worked example: designing a bookmarks API on paper, then a thin slice of it in Express.

@@ -26,7 +26,7 @@ Using the finished client should feel like an SDK: everything autocompletes, ill
 - `06-narrowing-and-type-guards.md` (validating unknown responses)
 - `07-generics.md` (the shared request function)
 - `09-utility-types.md` (core: deriving payload types)
-- `12-tooling-and-real-world-patterns.md` (fetch patterns, boundary validation)
+- `12-tooling-and-real-world-patterns.md` (fetch patterns, boundary validation, typed testing with Vitest)
 
 ## Requirements Checklist
 
@@ -54,6 +54,7 @@ Using the finished client should feel like an SDK: everything autocompletes, ill
 - [ ] `src/demo.ts`: fetches users, creates a post, patches it, lists a user's incomplete todos — logging typed results, with every error branch handled (the compiler must force this)
 - [ ] Deliberately break one validator (e.g., demand a field the API doesn't send) and document the resulting typed validation error in a comment — proving guards actually run
 - [ ] Comment block quoting 3+ compile errors from misuse (sending `id` in a create payload; typo'd filter property; treating a `Result` as the raw value)
+- [ ] Write Vitest tests for `request`/one resource method: mock `fetch` with a typed mock (`vi.fn<typeof fetch>()`), and cover one success case and one validation-failure case using `satisfies`-checked fixtures — a handful of focused tests, not a full suite (Chapter 12's testing section)
 
 ## Hints
 
@@ -63,6 +64,7 @@ Using the finished client should feel like an SDK: everything autocompletes, ill
 - For the `Result`-vs-throw decision: `Result` gives compiler-forced handling (Chapter 5); a typed error class gives idiomatic `try/catch` with `instanceof` narrowing (Chapters 6/8). Both are professional; mixing them is not.
 - JSONPlaceholder fakes writes (POST returns an id but nothing persists) — perfect: your types describe the *contract*, and the demo still works.
 - Query-string building from a typed filter object: `Object.entries` + `URLSearchParams`; mind that values need `String(...)` conversion.
+- For the tests: `vi.fn<typeof fetch>()` gives you a mock whose `mockResolvedValue` must return something shaped like a `Response` (at minimum `ok` and a `json()` method) — the mismatch if you get it wrong is itself a good demonstration of typed mocks catching drift.
 
 ## Stretch Goals
 

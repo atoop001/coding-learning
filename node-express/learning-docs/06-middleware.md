@@ -14,7 +14,9 @@ Middleware is the single most important idea in Express — the framework is hon
 
 **`app.use(fn)`** — registers middleware for *all* methods and paths. `app.use('/api', fn)` restricts it to paths starting with `/api`. Contrast with `app.get(path, fn)`, which only matches GET requests to that exact pattern.
 
-**Built-in middleware** — ships with Express: **`express.json()`** parses JSON request bodies into `req.body`; **`express.urlencoded({ extended: true })`** parses classic HTML-form bodies; **`express.static('public')`** serves files from a folder (an `index.html`, CSS, images) without you writing routes for them.
+**Built-in middleware** — ships with Express: **`express.json()`** parses JSON request bodies into `req.body`; **`express.urlencoded({ extended: true })`** parses classic HTML-form bodies; **`express.static('public')`** serves files from a folder (an `index.html`, CSS, images) without you writing routes for them. None of these parse **`multipart/form-data`** — the encoding a browser uses to upload a *file* — which needs its own middleware (below).
+
+**File uploads (recognition level)** — a form or fetch call that includes a file sends `Content-Type: multipart/form-data`, not JSON. `express.json()`/`express.urlencoded()` silently do nothing with it — `req.body` stays empty and the file goes nowhere. Handling it needs dedicated middleware, most commonly **multer**, which parses the multipart body, writes the file somewhere (disk or memory), and populates `req.file`/`req.files` plus `req.body` for the other form fields. You don't need to master this now — just recognize the shape when you see it.
 
 **Application-level vs router-level middleware** — the same concept, different attachment point. `app.use(...)` affects the whole app; `router.use(...)` affects only requests that reach that router. Use router-level middleware for concerns that belong to one resource (e.g., auth on `/api/admin` routes only).
 
@@ -172,6 +174,19 @@ app.listen(3000);
 ```
 
 Before adding *any* third-party middleware, apply a quick sniff test: Is it actively maintained? Weekly downloads in the millions or a well-known maintainer? Does it do one thing you actually need — or could three lines of your own middleware do it? (morgan and cors pass; plenty of abandoned middleware on npm does not.) Every dependency is code you now ship without having read.
+
+### File uploads, the shape of it (recognition level)
+
+```js
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' }); // writes files to disk; a real project validates type/size (Project stretch goal)
+
+app.post('/api/avatar', upload.single('avatar'), (req, res) => {
+  res.json({ filename: req.file.filename }); // req.file exists only because multer ran first
+});
+```
+
+That's the whole shape: `multer(...)` builds middleware, `upload.single('fieldName')` guards one route, and `req.file` shows up only downstream of it — same pipeline model as everything else in this chapter.
 
 ### Router-level middleware
 

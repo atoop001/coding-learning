@@ -45,6 +45,7 @@ Build a three-column kanban board (Backlog / In Progress / Done): create tasks, 
 ### Quality
 - [ ] Stable keys (task ids) everywhere; no console warnings, StrictMode on and clean
 - [ ] `npm run build` passes; no `any`
+- [ ] Write 2–3 Vitest tests for the reducer: at least one action and one invariant (e.g. `task_added` appends correctly, renaming a nonexistent id returns the same reference). It's a pure function — no rendering, no Testing Library needed. Chapter 13 formally teaches the Vitest/Testing Library setup; skim its "Testing components" section for the install command, but a reducer test is just `expect(reducer(state, action)).toEqual(...)` — you don't need the rest of the stack to start
 
 ## Hints
 
@@ -60,4 +61,4 @@ Build a three-column kanban board (Backlog / In Progress / Done): create tasks, 
 - [ ] Drag-and-drop between columns using native HTML5 drag events (`onDragStart`/`onDragOver`/`onDrop`) dispatching the same `task_moved` action as the buttons — good architecture means DnD adds *zero* reducer changes
 - [ ] A "column WIP limit" (e.g. In Progress max 3) enforced in the reducer, with the UI explaining rejected moves
 - [ ] Task detail modal (due date, description) — decide: more reducer state or component-local?
-- [ ] Unit tests for the reducer with Vitest — every action, every invariant, including reference-equality of no-ops (you'll formalize testing in Chapter 13; reducers need no DOM, so you can start early)
+- [ ] Full reducer coverage with Vitest — beyond the required 2–3, test *every* action and invariant, including reference-equality of no-ops (Chapter 13 formalizes the stack; you already started above)

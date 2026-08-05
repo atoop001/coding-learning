@@ -8,12 +8,12 @@
 
 **IaaS (Infrastructure as a Service)** — renting raw computing primitives: virtual machines, disks, networks. You get root and total control; you owe OS updates, security hardening, process management, HTTPS, scaling — everything from Chapter 2's long checklist. AWS, Microsoft Azure, and Google Cloud are the big three; DigitalOcean/Hetzner/Linode are simpler VPS-flavored players.
 
-**PaaS (Platform as a Service)** — renting the *outcome*: "run this app at this URL." The platform provisions machines, builds from your repo (or runs your Docker image), injects config, terminates HTTPS, restarts crashes, streams logs. Current learner-friendly trio:
-- **Render** — the gentlest on-ramp; connect repo → web service; free static sites; free-tier web services that sleep when idle; managed Postgres (free instances are time-limited — see free tiers below).
-- **Railway** — slick, fast, usage-metered pricing (a monthly credit you burn down); excellent for app+database stacks; hobby usage is cheap but not strictly $0 after trial.
-- **Fly.io** — closest to real infrastructure: takes your Dockerfile, runs true VMs in regions you pick, CLI-first (`flyctl`). More to learn, more control; the natural "graduating" PaaS.
+**PaaS (Platform as a Service)** — renting the *outcome*: "run this app at this URL." The platform provisions machines, builds from your repo (or runs your Docker image), injects config, terminates HTTPS, restarts crashes, streams logs. Current learner-friendly trio — **as of mid-2026** (free tiers change; verify current terms before committing to any of them, and see capstones/README.md's "Keeping It Free" section for the maintained summary):
+- **Render** — the gentlest on-ramp; connect repo → web service; free static sites; a genuinely free-tier web service that sleeps after ~15 idle minutes (30–60s cold start on the next request); managed Postgres exists but its free tier now expires after 30 days — pair Render's free web service with a free Neon or Turso database (below) if you want a stack that stays at $0 indefinitely.
+- **Railway** — slick, fast, usage-metered pricing (a monthly credit you burn down); excellent for app+database stacks; as of mid-2026 no longer offers a true free tier — expect to pay from day one (or shortly after a trial credit runs out).
+- **Fly.io** — closest to real infrastructure: takes your Dockerfile, runs true VMs in regions you pick, CLI-first (`flyctl`). More to learn, more control; as of mid-2026 also no longer offers a true free tier. The natural "graduating" PaaS once you're paying for something anyway.
 
-Honest comparison in one line each: Render optimizes for *easy*, Railway for *pleasant*, Fly for *powerful*. Any of them can host every project in this track; pick one, learn it well, and know the other two exist.
+Honest comparison in one line each: Render optimizes for *easy* (and is currently the only one of the three with a real free tier), Railway for *pleasant*, Fly for *powerful*. Any of them can host every project in this track; pick one, learn it well, and know the other two exist.
 
 **Managed service** — any component where the provider operates the software and you consume it: managed Postgres (they patch, back up, monitor the database server), managed Redis, object storage, load balancers. The trade is always the same: **money for undifferentiated toil**. A managed database costs more than running Postgres on a VM yourself — and is worth it approximately always at your scale, because the alternative's true cost includes you becoming a competent database administrator with a tested backup strategy (Chapter 10 shows what that entails).
 
@@ -21,11 +21,13 @@ Honest comparison in one line each: Render optimizes for *easy*, Railway for *pl
 
 **Buildpacks vs Dockerfile deploys** — the two ways a PaaS turns your repo into a running thing: auto-detection ("looks like Node; I'll `npm ci` and run your start script" — zero config, some magic) or your own Dockerfile (Chapter 5's work, honored exactly — portable, predictable). Start with detection for speed; switch to your Dockerfile when you want the same artifact locally, in CI, and in prod.
 
-**Free tier** — real, useful, and gotcha-laden. The patterns to know: **(1) Sleep-on-idle** — free PaaS web services spin down after ~15 idle minutes; the next visitor waits through a cold start of up to a minute. Fine for demos; know it exists before a recruiter clicks your link. **(2) Time-limited resources** — free managed databases often *expire* (Render's free Postgres is deleted after ~30–90 days unless upgraded — check current terms). **(3) Credit-based trials** (Railway) that convert to metered billing. **(4) IaaS "free tiers"** (AWS) that are free only within precise limits and bill real money past them — a famous source of surprise-bill horror stories. Universal defense: read the current pricing page (these change yearly), set billing alerts anywhere a card exists, and treat any free database as disposable.
+**Free tier** — real, useful, and gotcha-laden, and shrinking: **as of mid-2026**, Railway and Fly.io have both dropped their free tiers entirely; Render is the PaaS that still has a genuine one. Free-tier facts drift fast — the categories below are stable, but the specifics WILL be out of date by the time you read this; capstones/README.md's "Keeping It Free" section is kept current and is the thing to trust over this paragraph. The patterns to know: **(1) Sleep-on-idle** — Render's free web services spin down after ~15 idle minutes; the next visitor waits through a cold start of 30–60 seconds. Fine for demos; know it exists before a recruiter clicks your link. **(2) Time-limited or pausing resources** — Render's free Postgres expires after 30 days; Supabase's free projects pause after 7 idle days. The databases that *don't* expire: **Neon** (free Postgres, scales to zero when idle, no expiry) and **Turso** (free SQLite, generous limits) — the safe $0 database picks right now. **(3) Credit-based trials** (historically Railway's model) that convert to metered billing once the credit is gone. **(4) IaaS "free tiers"** (AWS) that are free only within precise limits and bill real money past them — a famous source of surprise-bill horror stories. Universal defense: read the current pricing page (these change yearly, sometimes overnight), set billing alerts anywhere a card exists, and treat any free database as disposable.
 
 **Availability zone (AZ)** — subdivision of a region: physically separate data centers close enough for fast networking. "Multi-AZ" means your service survives one building's outage — the redundancy tier below "multi-region." PaaS platforms handle this invisibly; the term matters because AWS asks you to choose.
 
 **Region** — the physical location of your rented computers (`us-east`, `frankfurt`). Two rules cover you for years: put app and database in the *same* region (cross-region database calls add latency to every query), and put both near your users.
+
+**Infrastructure as Code (IaC)** — describing infrastructure (servers, databases, networks, permissions) in versioned config files instead of clicking through a dashboard, so it's reviewable, diffable, and reproducible like any other code. **Terraform** (HashiCorp, cloud-agnostic, its own HCL language) and **Pulumi** (same idea, written in a real programming language like TypeScript or Python) are the two names you'll hear most; both work by describing the *desired end state* and letting the tool figure out how to get there ("apply"), and both can tear infrastructure down as cleanly as they built it. You've already met a miniature version of this idea: Fly's `fly.toml` is dashboard-settings-as-a-committed-file. At vocabulary level for now — recognize the names and the concept for interviews; hands-on Terraform is a natural next step whenever raw cloud work becomes real.
 
 **Core AWS vocabulary** — conceptual level; each maps to something you already understand:
 - **EC2 (Elastic Compute Cloud)** — virtual machines. Chapter 2's VPS, at AWS scale. When a PaaS runs your app, EC2-class machines are what's underneath.
@@ -51,7 +53,7 @@ The whole IaaS-vs-PaaS tradeoff, compressed into the table you'll redraw in inte
 | Who patches the OS? | Them | You |
 | Who restarts crashes? | Them | You (systemd you configured) |
 | HTTPS | Automatic | You (or their managed LB, configured by you) |
-| Cost at hobby scale | $0–10/month | $5–30/month + your evenings |
+| Cost at hobby scale | $0 (Render web + Neon/Turso db) – a few $/month (Railway/Fly) | $5–30/month + your evenings |
 | Cost at big scale | Premium per unit | Cheapest per unit, if operated well |
 | Control / unusual needs | Limited | Total |
 | What it teaches | Application delivery | Systems administration |
@@ -175,7 +177,7 @@ credits, overage) are stable. Verify which apply this year.
 
 2. **Treating a sleeping free service as broken (or letting a recruiter discover it).** Thirty-second cold start after idle is *the documented free-tier behavior*, not a bug. Correction: know which of your deployments sleep; for anything you'll show humans, either accept the warm-up, pay the few dollars for always-on, or warm it before demos.
 
-3. **Losing a project's data to free-database expiry.** Render's free Postgres has a lifespan; the deletion email goes to spam; the demo dies quietly. Correction: read the expiry terms when you create it, calendar the date, and practice Chapter 10's backup/restore *before* it matters. Free databases are for data you can afford to lose.
+3. **Losing a project's data to free-database expiry.** Render's free Postgres expires after 30 days; the deletion email goes to spam; the demo dies quietly. Correction: read the expiry terms when you create it, calendar the date, and practice Chapter 10's backup/restore *before* it matters — or sidestep the whole problem by pointing Render's free web service at a free Neon or Turso database instead, neither of which expires.
 
 4. **App in one region, database in another.** Every query crosses an ocean; the app is mysteriously slow though nothing is "wrong." Correction: co-locate app and DB at creation time (moving later is a chore). When users are far away, move the *pair*.
 
@@ -189,7 +191,7 @@ credits, overage) are stable. Verify which apply this year.
 
 1. **Spectrum placement.** Draw the IaaS→PaaS→FaaS spectrum and place: a Hetzner VPS, EC2, Fly.io, Render, Railway, Lambda, and GitHub Pages. For each: who patches the OS? Who restarts crashes? Who owns HTTPS? Who decides when it scales?
 
-2. **Pricing-page recon.** For Render, Railway, and Fly.io, read the *current* pricing/free-tier pages and fill a table: free web service behavior (sleep? hours?), free/cheap Postgres terms (expiry? size?), what a hobby project realistically costs monthly, and one gotcha per platform in your own words. Date the table — you'll enjoy how fast it ages.
+2. **Pricing-page recon.** For Render, Railway, Fly.io, Neon, and Turso, read the *current* pricing/free-tier pages and fill a table: free web service (or database) behavior (sleep? scale-to-zero? expiry?), what a hobby project realistically costs monthly, and one gotcha per platform in your own words. Date the table, then compare it against capstones/README.md's "Keeping It Free" section — note any drift you find; you'll enjoy how fast this ages.
 
 3. **First PaaS deploy.** Deploy any backend of yours to Render or Railway with a managed Postgres attached and config via dashboard env vars (a dry run for Project 5 — keep it rough). Capture: the PORT/0.0.0.0 lesson observed live, cold-start timing after 20 idle minutes, and where in the dashboard logs live.
 

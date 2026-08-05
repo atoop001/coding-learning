@@ -80,6 +80,63 @@ Graphs, unlike trees, can have cycles. Both traversals MUST track visited vertic
 
 When edges have weights, BFS's ring logic breaks (a 2-edge path can be cheaper than a 1-edge path). **Dijkstra's algorithm** repairs it: replace the queue with a **priority queue** (Chapter 10) keyed on total distance so far, and always expand the cheapest known frontier vertex. O((V + E) log V) with a binary heap; requires non-negative weights. It's BFS with a heap — if you know Chapters 4, 5, 10, you already own all its parts.
 
+### Union-Find (Disjoint Set Union)
+
+BFS/DFS answer "can I get from A to B?" by searching the whole graph each time. A different family of questions — "are these two already in the same group?", asked over and over as connections keep arriving — has a purpose-built structure: **Union-Find**, also called **Disjoint Set Union (DSU)**. This is *dynamic connectivity*: you don't have the final graph up front, you're merging groups incrementally and need cheap membership checks between merges.
+
+Two operations carry the whole idea:
+
+- **`find(x)`** — which group is x in? Every node points to a parent; walk up until a node points to itself (the group's **root/representative**).
+- **`union(x, y)`** — merge x's group and y's group by hanging one root under the other.
+
+A naive version chains parents arbitrarily, and a bad merge order degenerates into a long list — `find` becomes O(n). Two cheap fixes make it fast:
+
+- **Path compression**: while `find` walks up to the root, re-point every node it passed through directly to that root. The *next* `find` on any of those nodes is a single hop.
+- **Union by size/rank** (know it exists, awareness level): when merging, attach the smaller group's root under the larger group's root instead of picking a direction arbitrarily — keeps trees shallow from the start.
+
+With both in place, `find`/`union` run in **near-O(1) amortized** time — technically O(α(n)), the inverse Ackermann function, which grows so slowly it's a constant for any n you'll ever encounter.
+
+Reach for Union-Find when: you need repeated "same group?" queries as edges arrive (not a single traversal); **cycle detection in an undirected graph** — union each edge's endpoints, and a `union` call that finds them *already* in the same group means this edge closes a cycle; and **Kruskal's MST algorithm** (name-drop: sort edges by weight ascending, union endpoints, skip any edge that would close a cycle — Union-Find *is* the cycle check).
+
+```python
+class UnionFind:
+    """Disjoint Set Union with path compression + union by size."""
+
+    def __init__(self, items):
+        self.parent = {x: x for x in items}
+        self.size = {x: 1 for x in items}
+
+    def find(self, x):
+        """Root of x's group, flattening the path along the way."""
+        root = x
+        while self.parent[root] != root:
+            root = self.parent[root]
+        while self.parent[x] != root:          # path compression pass
+            self.parent[x], x = root, self.parent[x]
+        return root
+
+    def union(self, x, y):
+        """Merge x's and y's groups. Returns False if already merged
+        (that False is your cycle-detection signal on undirected edges)."""
+        rx, ry = self.find(x), self.find(y)
+        if rx == ry:
+            return False
+        if self.size[rx] < self.size[ry]:      # union by size: small under big
+            rx, ry = ry, rx
+        self.parent[ry] = rx
+        self.size[rx] += self.size[ry]
+        return True
+
+
+if __name__ == "__main__":
+    uf = UnionFind(["A", "B", "C", "D", "E"])
+    uf.union("A", "B")
+    uf.union("B", "C")
+    print(uf.find("A") == uf.find("C"))    # True — same group
+    print(uf.find("A") == uf.find("D"))    # False — different groups
+    print(uf.union("A", "C"))              # False — already connected: a cycle!
+```
+
 ## Code Examples
 
 ```python
@@ -250,6 +307,8 @@ JavaScript: `Map`/`Set` play the roles of dict/set; arrays with `push`/`pop` giv
 
 **6. Mutating the neighbor list while traversing it.** Removing edges inside `for v in graph[u]:` skips neighbors (the Chapter 2 iteration bug in a new costume). Iterate over a copy, or collect removals and apply after.
 
+**7. Union-Find without path compression (or union by size).** Skip both and worst-case merge orders build a degenerate chain — `find` walks it one node at a time, back to O(n) per call, the exact "linked list in disguise" failure mode from Chapter 9's unbalanced BST. Path compression alone already fixes almost all of it in practice; add union by size for the (rarely needed) worst-case guarantee.
+
 ## Practice Exercises
 
 1. Write `Graph` as a class wrapping `defaultdict(list)` with `add_edge(u, v, directed=False)`, `neighbors(u)`, and `vertices()`. Rebuild the chapter's functions as methods and re-run the demos.
@@ -257,6 +316,8 @@ JavaScript: `Map`/`Set` play the roles of dict/set; arrays with `push`/`pop` giv
 3. `word_ladder(start, end, word_list)`: shortest chain of one-letter changes (`cold → cord → card → ward`). Vertices are words; compute neighbors implicitly. Return the path, not just its length. What's the neighbor-generation cost per word, and total?
 4. Detect a cycle in a **directed** graph using DFS with three states per vertex (unvisited / in-progress / done) — explain why the plain visited set that suffices for undirected graphs gives false positives here. Then use it to make `topological_sort` report *which* vertices form the cycle.
 5. `maze_solver(grid, start, exit)`: shortest path in a grid with walls, returning the actual route as coordinates. Then add "portals" (pairs of cells that teleport, costing 1 move) — what changes in the neighbor function, and what doesn't change at all?
+6. Rewrite `connected_components` using `UnionFind` instead of DFS: union every edge's endpoints, then group vertices by shared root. Compare the two implementations' clarity and note the real difference in when you'd reach for each — one traversal from scratch vs. incremental merges.
+7. Detect a cycle in an undirected graph, given as an edge list, using only `UnionFind`: process edges one at a time; a `union` call that returns `False` is a cycle witness. Then explain why this trick doesn't generalize to directed graphs — tie it back to exercise 4's three-state DFS.
 
 ---
 

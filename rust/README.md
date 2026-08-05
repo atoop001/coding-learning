@@ -4,6 +4,10 @@ Deep-dive track into systems programming with Rust: memory management without a 
 
 **This is the most challenging track in this collection.** It assumes you are already comfortable in at least one other language (JavaScript/TypeScript and Python are the reference points used throughout the chapters). Do not take this as a first programming track: the chapters lean on your existing mental models — especially around garbage collection, dynamic typing, and async — and spend their effort on where Rust *differs*. The reward for the difficulty: a genuine understanding of how memory, ownership, and concurrency actually work, which will improve your code in every language, plus a meaningful career differentiator.
 
+## Why Rust for a web developer?
+
+It's not required — you can build a full web career on JS/TS alone. But Rust does show up on the edges of web development in ways worth knowing about: **Axum** and **Actix Web** are fast, increasingly popular backend frameworks (some teams pick Rust specifically for API services under heavy load); and **WebAssembly** via `wasm-bindgen`/`wasm-pack` lets you compile Rust to run *in the browser* alongside your JS, typically for performance-critical slices (image/audio processing, parsers, simulations) rather than whole apps. Treat this track as depth and curiosity, not a job requirement — nobody is going to reject your web dev application for not knowing Rust.
+
 ## How to use this track
 
 - Chapters in `learning-docs\` are the primary study material — read them in order; each assumes only its predecessors. Type out and run every code example; deliberately trigger the compiler errors shown. In Rust, the error messages are course content.
@@ -57,6 +61,10 @@ Self-paced at roughly **10–12 weeks** with 6–10 hours/week:
 - **Weeks 10–12** — Capstone (Project 7). Scope small, finish completely.
 
 If a week slips, let the *projects* absorb the slip, not the chapter order — but never skip a project entirely; they are where ownership becomes instinct.
+
+## Short on time?
+
+This track is optional and long (10–12 weeks). If life intervenes, Chapters 1–11 plus Projects 1–3 form a complete, worthwhile arc on their own: ownership, borrowing, structs, enums, error handling, collections, and generics/traits — the ideas that actually reshape how you think about code in any language. Stopping there, without ever touching lifetimes, smart pointers, or concurrency, is a legitimate and respectable place to end.
 
 ## Companion resources (optional but recommended)
 

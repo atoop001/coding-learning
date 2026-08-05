@@ -2,7 +2,7 @@
 
 ## Overview
 
-Developers install software constantly: languages, CLIs, libraries, utilities. Doing this by browsing websites and clicking through installers is slow, unrepeatable, and error-prone. **Package managers** fix that: one command searches a curated catalog, downloads the right version, installs it, and can later upgrade or remove it cleanly. This chapter covers **winget** (Windows apps), **npm** (Node/JavaScript packages), and **pip** (Python packages), plus the Linux counterpart **apt** you'll meet on servers — and crucially, how installation interacts with PATH from Chapter 6, because "installed but not found" is the #1 post-install complaint.
+Developers install software constantly: languages, CLIs, libraries, utilities. Doing this by browsing websites and clicking through installers is slow, unrepeatable, and error-prone. **Package managers** fix that: one command searches a curated catalog, downloads the right version, installs it, and can later upgrade or remove it cleanly. This chapter covers **winget** (Windows apps), **npm** (Node/JavaScript packages), and **pip** (Python packages), plus the Linux counterpart **apt** you'll meet on servers — and crucially, how installation interacts with PATH from Chapter 6, because "installed but not found" is the #1 post-install complaint. Every one of those tools fetches things over HTTP under the hood; the chapter closes by showing you how to make those same HTTP requests yourself — `curl`, `Invoke-RestMethod` — to poke at a dev server or API directly.
 
 ## Definitions & Explanations
 
@@ -19,6 +19,12 @@ Developers install software constantly: languages, CLIs, libraries, utilities. D
 **pip** — Installs Python packages. The safest invocation on Windows is `py -m pip install ...` (or `python -m pip`), which guarantees pip matches the Python you think you're using. **Virtual environments** (`venv`) give each project its own isolated package set — the Python equivalent of npm's per-project `node_modules`, and the professional default.
 
 **apt** — Debian/Ubuntu's package manager, which you'll use inside WSL and on most servers: `sudo apt update` refreshes the catalog, `sudo apt install <pkg>` installs. `sudo` = run as administrator (Chapter 10).
+
+**curl** — The universal command-line HTTP client, bundled with Windows since 10 (1803+), macOS, and every Linux distro. It makes a request to a URL and prints (or saves) the response — the same mechanism `winget`, `npm install`, and `pip install` use internally to fetch things, just exposed for you to drive directly: checking whether a server is up, poking at a REST endpoint before writing code against it.
+
+**The PowerShell `curl` alias gotcha** — PowerShell ships `curl` (and `wget`) as *aliases* for `Invoke-WebRequest`, not the real curl.exe. Real curl's flags (`-X`, `-d`, `-H`) don't map onto `Invoke-WebRequest`'s parameters, so a command copied from a Bash tutorial can fail or behave oddly. Typing `curl.exe` explicitly (with the extension) bypasses the alias and runs the actual binary.
+
+**Invoke-RestMethod / Invoke-WebRequest** — PowerShell's native HTTP cmdlets. `Invoke-WebRequest` (alias `iwr`) returns the full response as an object (`.StatusCode`, `.Headers`, `.Content`); `Invoke-RestMethod` (alias `irm`) is the JSON-API-friendly version — it parses a JSON response body straight into a usable PowerShell object.
 
 **Dependency** — A package your package needs. Managers resolve chains of these automatically — the core value proposition.
 
@@ -124,6 +130,53 @@ apt list --installed | head          # what's installed
 sudo apt remove htop                 # uninstall
 ```
 
+HTTP from the terminal — checking a server and calling an API:
+
+```powershell
+# PowerShell — "is my app actually up?"
+curl.exe http://localhost:3000                        # real curl.exe (not the alias)
+Invoke-WebRequest http://localhost:3000                # native cmdlet, alias: iwr
+(Invoke-WebRequest http://localhost:3000).StatusCode   # just the status code
+# 200
+
+# Status codes and headers:
+curl.exe -i http://localhost:3000                      # -i: include response headers
+# HTTP/1.1 200 OK
+# Content-Type: text/html; charset=utf-8
+# ...
+(Invoke-WebRequest http://localhost:3000).Headers      # headers as a collection
+
+# JSON API call, parsed straight into an object:
+$result = Invoke-RestMethod http://localhost:3000/api/users   # alias: irm
+$result.name                                            # dot straight into the parsed JSON
+
+# POST with a JSON body:
+$body = @{ name = "Ada Lovelace"; role = "engineer" } | ConvertTo-Json
+Invoke-RestMethod -Uri http://localhost:3000/api/users `
+    -Method Post -Body $body -ContentType "application/json"
+```
+
+```bash
+# Bash — "is my app actually up?"
+curl http://localhost:3000                              # dump the response body
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000   # just the status code
+# 200
+
+# Status codes and headers:
+curl -i http://localhost:3000                            # -i: include response headers
+# HTTP/1.1 200 OK
+# Content-Type: text/html; charset=utf-8
+# ...
+
+# JSON API call:
+curl http://localhost:3000/api/users
+
+# POST with a JSON body:
+curl -X POST http://localhost:3000/api/users \
+    -H "Content-Type: application/json" \
+    -d '{"name": "Ada Lovelace", "role": "engineer"}'
+```
+
 ## Common Pitfalls
 
 **Pitfall: tool installed, terminal says "not recognized."**
@@ -154,6 +207,10 @@ The local catalog is empty or stale.
 `curl something | bash` or `irm something | iex` executes arbitrary internet code with your permissions.
 *Correction*: prefer the package manager's catalog. When a vendor only offers the pipe-to-shell method, read the script first (download it, inspect, then run) and make sure the source is the official domain.
 
+**Pitfall: `curl` in PowerShell silently isn't curl.**
+Typing `curl -X POST ...` in PowerShell runs the `Invoke-WebRequest` alias, which doesn't understand `-X`/`-d` the same way — you get a confusing parameter-binding error instead of a POST request.
+*Correction*: for real curl syntax on Windows, call `curl.exe` explicitly (the extension forces the actual binary, not the alias); for PowerShell-native syntax, use `Invoke-RestMethod`/`Invoke-WebRequest`'s own parameters (`-Method`, `-Body`, `-Headers`).
+
 ## Practice Exercises
 
 1. Use `winget search` to find three tools: a terminal-based text editor, a JSON processor called `jq`, and anything else that intrigues you from `winget search cli`. For each, run `winget show` and note the publisher, version, and install location hints. Install `jq` and prove it works with `'"hello"' | jq .` (new terminal if needed!).
@@ -161,3 +218,5 @@ The local catalog is empty or stale.
 3. Create a scratch folder, make it an npm project, install any two packages locally and one CLI tool globally. Show: the local packages listed at depth 0, the global tool running from a *different* directory, and where the global bin folder is (`npm root -g`, then find the adjacent bin location on PATH).
 4. Create a Python venv in a scratch project, activate it, install `requests` and `rich`, export `requirements.txt`, deactivate, delete the venv folder entirely, recreate it, and restore both packages from the requirements file. This round-trip is the core professional Python workflow.
 5. (Requires WSL or any Linux box — park it until Chapter 10 if needed.) Run the full apt cycle: update, install `tree`, run `tree` on a directory, then remove it. Compare each step to its winget equivalent in a two-column note.
+6. Start any local dev server you have handy (`npx serve`, `py -m http.server 8000`, or an existing project), then from a separate terminal confirm it's up: print just the status code, once in PowerShell and once in Bash. Stop the server and repeat the check — what does each command show when nothing is listening?
+7. Pick any public JSON API that needs no auth (e.g. `https://api.github.com`), fetch it with `Invoke-RestMethod` in PowerShell and `curl` in Bash, and print one field from the parsed response in each. Then use `curl.exe -i` to view the raw response headers and note the `Content-Type`.

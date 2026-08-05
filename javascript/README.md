@@ -15,12 +15,12 @@ A self-paced path from "I've dabbled" to job-ready web development JavaScript. I
 | 04 | `learning-docs/04-conditionals.md` | `if`/`else`, `switch`, guard clauses |
 | 05 | `learning-docs/05-loops-and-iteration.md` | `for`, `while`, `for...of`, `break`/`continue` |
 | 06 | `learning-docs/06-functions.md` | Declarations, expressions, arrows, parameters, scope |
-| 07 | `learning-docs/07-arrays-and-array-methods.md` | Arrays; `map`/`filter`/`reduce` and friends |
+| 07 | `learning-docs/07-arrays-and-array-methods.md` | Arrays; `map`/`filter`/`reduce` and friends; `Map`/`Set` |
 | 08 | `learning-docs/08-objects.md` | Object literals, methods, `this`, references & copies |
-| 09 | `learning-docs/09-strings-and-template-literals.md` | String methods, template literals, `split`/`join` |
+| 09 | `learning-docs/09-strings-and-template-literals.md` | String methods, template literals, `split`/`join`, regex basics |
 | 10 | `learning-docs/10-dom-manipulation.md` | Selecting, updating, creating elements |
 | 11 | `learning-docs/11-events.md` | `addEventListener`, forms, event delegation |
-| 12 | `learning-docs/12-error-handling.md` | `try`/`catch`/`finally`, `throw`, custom errors |
+| 12 | `learning-docs/12-error-handling.md` | `try`/`catch`/`finally`, `throw`, custom errors, breakpoint debugging |
 | 13 | `learning-docs/13-closures-and-higher-order-functions.md` | Callbacks, factories, private state |
 | 14 | `learning-docs/14-classes-and-prototypes.md` | `class`, inheritance, the prototype chain |
 | 15 | `learning-docs/15-asynchronous-javascript.md` | Event loop, callbacks, promises, `async`/`await` |
@@ -40,6 +40,8 @@ A self-paced path from "I've dabbled" to job-ready web development JavaScript. I
 | 6 | `projects/06-weather-dashboard.md` | Weather dashboard (fetch/async) | Intermediate+ |
 | 7 | `projects/07-expense-tracker.md` | Modular expense tracker (classes + modules + localStorage) | Advanced− |
 | 8 | `projects/08-capstone-recipe-box.md` | Capstone: "Recipe Box" single-page app | Advanced |
+
+This track doesn't cover automated testing by design — once you've finished it, the `testing-debugging-security/` track picks up here and teaches how to write unit tests for the kind of code you just built.
 
 ## Suggested cadence
 

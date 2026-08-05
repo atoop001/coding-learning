@@ -81,6 +81,33 @@ const data = await resp.json();   // parsed JSON -> a JS object
 
 One browser-only wrinkle to file away: **CORS** (Cross-Origin Resource Sharing). Browsers block page JavaScript from reading responses from a *different* site unless that site's response headers (`Access-Control-Allow-Origin`) permit it. It protects users' logged-in sessions from malicious pages. curl and Python are unaffected — CORS is enforced *by browsers only*. When a fetch fails with a CORS error but curl works, nothing is "down"; the API simply doesn't allow browser pages from your origin.
 
+### CORS preflight: the OPTIONS request nobody warned you about
+
+Not every cross-origin `fetch` behaves the same way. A **"simple" request** (plain `GET`/`HEAD`/`POST`, no custom headers, and a `Content-Type` of only `text/plain`, `multipart/form-data`, or `application/x-www-form-urlencoded`) goes straight to the server — CORS only checks the response headers afterward. Anything else is **"non-simple"**: a method like `PUT`/`DELETE`/`PATCH`, a custom header (`Authorization`, `X-Api-Key`, anything nonstandard), or — the one that catches everyone — `Content-Type: application/json`, which is how virtually every real API call is made.
+
+For a non-simple request, the browser doesn't send your request first and ask questions later. It sends a **preflight**: an automatic `OPTIONS` request to the same URL, *before* your actual request, asking permission:
+
+```
+OPTIONS /api/widgets HTTP/1.1
+Origin: https://your-app.example
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type, x-api-key
+```
+
+The server must answer with headers that explicitly grant it:
+
+```
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://your-app.example
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: Content-Type, X-Api-Key
+Access-Control-Max-Age: 600
+```
+
+Only if the preflight succeeds does the browser send your real request at all — you never see the `OPTIONS` round trip in your JavaScript, but it happened on the wire, added a full request/response, and is exactly what's failing when a real request never even shows up in a server's access log despite the browser reporting a CORS error. `Access-Control-Max-Age` lets the browser cache "yes" for that many seconds so repeated calls skip re-asking.
+
+*The server side of this — actually sending these headers from an API — lives in the node-express track's security & configuration chapter.*
+
 ## Hands-On Examples
 
 All of these use free, no-key public APIs.
@@ -138,7 +165,23 @@ console.log(user.name, user.public_repos);
 
 Then trigger CORS deliberately: from the console on `https://example.com`, run `await fetch("https://www.google.com")` — expected: a CORS error in red. Same request from curl succeeds. Write down the lesson: the *browser* refused to share the response with the page, the network worked fine.
 
-### 6. POST JSON to an API
+### 6. Watch a preflight happen
+
+1. DevTools → **Network** tab, on any page (e.g. `https://example.com`), filter cleared.
+2. In the **Console**, force a non-simple request with a custom header:
+
+```js
+await fetch("https://httpbin.org/anything", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-Custom-Header": "hello" },
+  body: JSON.stringify({ a: 1 }),
+});
+```
+
+3. In the Network tab, look for **two** rows for that URL: one with method `OPTIONS` (the preflight, likely status `200`), immediately followed by the `POST` you actually asked for. Click the `OPTIONS` row → **Headers** → confirm `access-control-request-method` and `access-control-request-headers` in the request, and `access-control-allow-*` in the response.
+4. Now repeat with a *simple* request (no custom header, `Content-Type: text/plain`) and confirm: only one row, no `OPTIONS` — the preflight vanished because nothing about the request required permission-asking first.
+
+### 7. POST JSON to an API
 
 ```powershell
 curl.exe -s -X POST https://httpbin.org/post -H "Content-Type: application/json" -d "{\"title\":\"hello\",\"done\":false}"

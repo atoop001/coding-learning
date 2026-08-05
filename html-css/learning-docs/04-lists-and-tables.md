@@ -4,7 +4,7 @@
 
 Lists and tables are HTML's tools for structured data. Lists handle sequences and collections — navigation menus, ingredients, steps, FAQs. Tables handle genuinely two-dimensional data — schedules, price comparisons, statistics — where each cell's meaning depends on both its row and its column.
 
-Both are easy to use badly: tables were once abused for page layout (never do this), and lists are often faked with paragraphs and dashes. Used correctly, they're accessible, stylable, and self-documenting.
+Both are easy to use badly: tables were once abused for page layout (never do this), and lists are often faked with paragraphs and dashes. Used correctly, they're accessible, stylable, and self-documenting. Along the way you'll also meet `<details>`/`<summary>`, the native no-JS disclosure widget, as a natural companion to FAQ-style content.
 
 ## Definitions & Explanations
 
@@ -143,6 +143,28 @@ When a cell spans, the covered cells are simply *not written* in the affected ro
 - **Lists in disguise.** A single column of items is a list, not a table.
 
 Litmus test: could you meaningfully ask "what's in row 3, column 2?" If the columns don't have distinct meanings, it's not tabular data.
+
+### No-JS interactivity: `<details>` and `<summary>`
+
+`<details>` is a native disclosure widget — a collapsible section the browser handles entirely on its own, no JavaScript required. `<summary>` is its always-visible header; clicking (or pressing `Enter`/`Space` when focused) toggles the rest of the content open or closed.
+
+```html
+<details>
+  <summary>Do you offer refunds?</summary>
+  <p>Yes — within 30 days of purchase, no questions asked.</p>
+</details>
+```
+
+Add the `open` attribute to start a given `<details>` expanded:
+
+```html
+<details open>
+  <summary>Shipping (usually the one people check first)</summary>
+  <p>Orders ship within 2 business days.</p>
+</details>
+```
+
+It's a natural fit for FAQs as an alternative to a plain `<dl>` when you want each answer collapsed by default. Accessibility note: it's already keyboard-operable and announces its expanded/collapsed state to screen readers for free — one of the few interactive widgets you get correct with zero ARIA.
 
 ## Code Examples
 

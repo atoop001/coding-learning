@@ -2,6 +2,8 @@
 
 ## Overview
 
+**Prerequisite:** this chapter assumes you've completed the SQL track — at least through joins and schema design — already. It connects SQL you already know to Node/Express; it does not teach SQL from scratch, and Project 4 plus the capstone both assume real JOIN and schema fluency. If you haven't done the SQL track yet, stop and do it now rather than pushing through on partial understanding.
+
 Every API you've built so far keeps its data in a JavaScript array — restart the server and everything is gone. Real applications need **persistence**, and in backend work that almost always means a relational database. This chapter connects the SQL you learned in the SQL track to your Node/Express code: opening a database, running queries from route handlers, and — non-negotiably — using **parameterized queries** so user input can never be executed as SQL. We use **better-sqlite3** as the primary tool because SQLite is a real, production-grade database that lives in a single file, needs zero setup, and (in this library) has a synchronous API that keeps the learning surface small; we'll also map everything to **pg** (PostgreSQL) so you can see the async shape you'll use with a client-server database at work. Finally, you'll learn the structural habit that matters as much as any query: pulling SQL out of route handlers into a dedicated **data layer**, and managing schema changes with **migrations** instead of hand-edited databases.
 
 ## Definitions & Explanations
@@ -171,6 +173,18 @@ export async function findBookmark(id) {
 ```
 
 Because the repository hid the SQL, switching drivers changes this file and (since pg is async) adds `await` at call sites — the routes' *logic* survives intact. That's the layering paying off.
+
+### Aside: what about an ORM?
+
+You will see **Prisma** and **Drizzle** in almost every junior Node job posting, so it's worth naming what they are and why this track doesn't start there. An **ORM (Object-Relational Mapper)** is a library that lets you read and write your database through objects and method calls (`user.findMany()`, `db.select().from(users)`) instead of writing SQL strings yourself. What you buy: generated types (your editor knows `user.email` is a string before you run anything), migration tooling that diffs your schema for you, and a lot less boilerplate for routine CRUD. What you pay: you're now debugging through a translation layer — when a query is slow or wrong, you have to understand both the ORM's generated SQL *and* the ORM's own API and quirks, which is strictly more surface area than SQL alone. ORMs also make the easy 80% of queries very easy and the remaining 20% (complex joins, window functions, bulk operations) noticeably harder, often forcing you to drop to raw SQL anyway.
+
+This track teaches raw SQL plus a thin repository layer first, deliberately, because the ORM's generated queries only mean something once you can already read and write them yourself — otherwise you're memorizing an API on top of a black box. It also means when Prisma or Drizzle throws an opaque error, you have somewhere to stand: you can reason about what SQL it's probably generating and why. This is a genuinely strong interview answer, too: "I learned the raw SQL and the data-access-layer pattern first, so I understand what an ORM is abstracting, not just how to call it" reads as more senior than "I've only ever used Prisma," and it's true.
+
+### Aside: SQL isn't the only database
+
+Everything in this track — and most of the SQL track before it — is **relational**: fixed tables, fixed columns, rows related by foreign keys, and a query language (SQL) that joins across them. That's still the right default for most applications, but it's worth knowing what the alternative looks like, because you'll see it in job postings too. A **document database** (MongoDB is the one you'll meet most) stores data as JSON-like documents instead of rows in tables: a whole "bookmark" — including its tags array — can live as one flexible document, with no schema enforced up front and no `CREATE TABLE` step. That flexibility is genuinely useful when your data's shape varies a lot between records or changes frequently during early product development, and storing/reading a nested JSON blob without designing a join across three tables can be simpler and faster to build.
+
+The tradeoff is real, though: without enforced schema, "flexible" easily becomes "inconsistent" — nothing stops two documents in the same collection from having different fields, and you find out at read time, not write time. Multi-document transactions and complex relational queries (the kind of JOIN work the SQL track drilled) are possible in MongoDB but are not what it's built for, and teams that reach for a document database for genuinely relational data (users, orders, permissions) often end up reimplementing joins badly in application code. Teams pick document stores when the data really is document-shaped (content management, logging, catalogs with wildly varying attributes) or when they need horizontal write scaling that relational databases make harder. This track starts relational on purpose: relational modeling and SQL are the more broadly demanded, more transferable skill, and understanding *why* you'd reach for a document store is easier once you know what you're deviating from.
 
 ## Common Pitfalls
 

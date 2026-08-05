@@ -91,7 +91,7 @@ console.log(remaining(100, [{ amount: 30 }, { amount: "25" }, { amount: 10 }]));
 
 1. Breakpoint on the `left -= e.amount;` line.
 2. **F5** → **Node.js**. Add a **watch expression**: `typeof left`.
-3. Press **F5** (continue) repeatedly: watch `typeof left` flip from `"number"` to `"string"`→ no — it becomes `"number"` → `NaN`? Actually observe it: `100 - 30 = 70`, then `70 - "25"` — JS coerces to `45` here, but `+` would have concatenated. The debugger shows you what coercion *actually* did rather than what you guessed.
+3. Press **F5** (continue) repeatedly and watch `typeof left` stay `"number"` the whole way through: `100 - 30 = 70`, then `70 - "25"` — the `-` operator coerces the string operand to a number, giving `45`, not the concatenation `"70-25"` you'd get with `+`. Observe it yourself in the Variables panel rather than taking this on faith: the debugger shows you what coercion *actually* did.
 
 Also useful: the **JavaScript Debug Terminal** (Terminal panel → `+` dropdown). Any node/npm command run in it — including `npm test` — automatically attaches the debugger, so you can put breakpoints *inside failing Vitest tests* and inspect the moment an assertion is about to fail.
 

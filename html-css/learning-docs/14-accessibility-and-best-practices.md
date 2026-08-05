@@ -188,6 +188,8 @@ Related CSS pattern — **visually hidden but readable text** (for icon buttons,
 
 ### Example 2: Icon buttons and links, done right
 
+(The inline `<svg>` below is the same inline pattern introduced in Chapter 3's SVG primer — `viewBox` for scaling, `fill`/`currentColor` for styling. Here it's paired with `aria-hidden="true"` because the button's `aria-label` already gives it a name; the icon is decorative to assistive tech.)
+
 ```html
 <!-- Icon-only button: name it -->
 <button type="button" aria-label="Search">

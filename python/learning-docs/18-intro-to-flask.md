@@ -60,11 +60,11 @@ from flask import Flask
 app = Flask(__name__)
 
 @app.route("/")                      # the root URL
-def home():
+def home() -> str:
     return "<h1>Hello from Flask!</h1>"
 
 @app.route("/about")
-def about():
+def about() -> str:
     return "<p>My first web app. Chapters 1-17 led here.</p>"
 
 if __name__ == "__main__":
@@ -81,15 +81,15 @@ from flask import Flask, request
 app = Flask(__name__)
 
 @app.route("/greet/<name>")                  # /greet/ada
-def greet(name):
+def greet(name: str) -> str:
     return f"<h1>Hello, {name.title()}!</h1>"
 
 @app.route("/square/<int:number>")           # /square/7 — int converter
-def square(number):
+def square(number: int) -> str:
     return f"<p>{number}² = {number ** 2}</p>"
 
 @app.route("/search")                        # /search?q=python
-def search():
+def search() -> str:
     query = request.args.get("q", "")        # .get with default — it's dict-like!
     if not query:
         return "<p>Try /search?q=something</p>"

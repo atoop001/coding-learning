@@ -2,7 +2,7 @@
 
 ## Overview
 
-Ever wondered how typing `git` finds `C:\Program Files\Git\cmd\git.exe`? Or why a freshly installed tool gives "command not found" until you restart the terminal? The answers live in the **environment**: a set of named values every program inherits, chief among them **PATH**. This chapter demystifies environment variables, teaches you to read and change them safely, and then makes your shell *yours* — profiles, aliases, and functions that turn ten keystrokes into two. Understanding this chapter permanently cures the most common category of terminal confusion.
+Ever wondered how typing `git` finds `C:\Program Files\Git\cmd\git.exe`? Or why a freshly installed tool gives "command not found" until you restart the terminal? The answers live in the **environment**: a set of named values every program inherits, chief among them **PATH**. This chapter demystifies environment variables, teaches you to read and change them safely, and then makes your shell *yours* — profiles, aliases, and functions that turn ten keystrokes into two. It closes with **processes and ports**: listing what's running, stopping a stuck one, and figuring out what's squatting on a port your dev server needs — the "address already in use" frustration every web developer hits early. Understanding this chapter permanently cures the most common categories of terminal confusion.
 
 ## Definitions & Explanations
 
@@ -25,6 +25,10 @@ Changing User/Machine variables does **not** update already-running terminals �
 **Alias** — A short nickname for a command. PowerShell aliases (`Set-Alias g git`) can only rename a command — no arguments baked in. For "shortcut with arguments," PowerShell uses **functions**. Bash aliases *can* embed arguments: `alias gs='git status'`.
 
 **Function** — A named block of shell code callable like a command. The right tool for multi-step shortcuts in both shells.
+
+**Process** — A running instance of a program, identified by a numeric **PID** (process ID). Every terminal session, every dev server, every background tool is a process, and the OS tracks them all — same idea in both shells, different commands to see them.
+
+**Port** — A numbered endpoint (0–65535) a process can *bind* to so network traffic can find it. A dev server "running on port 3000" means some process holds a listening socket on `3000`; only one process can hold a given port at a time, which is exactly why a second `npm run dev` fails with "address already in use."
 
 **Execution policy (PowerShell/Windows only)** — A safety gate controlling whether `.ps1` files — including your own profile — are allowed to run at all. Fresh Windows machines often ship with `Restricted`, which silently blocks a freshly created profile from loading along with every other script. Check the current setting with `Get-ExecutionPolicy`; the standard developer fix, no admin required, is `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` — local scripts run freely, internet-downloaded ones must be signed or unblocked first. It's a seatbelt against accidental execution, not a security boundary. Chapter 8 revisits this in full alongside script authoring, but you need it now: if your profile changes in this chapter don't seem to take effect, an unset execution policy is a prime suspect.
 
@@ -147,6 +151,86 @@ Test-Path "D:\tools\mytool\mytool.exe"   # 3. Does the file actually exist there
 # If installed just now: open a NEW terminal (old ones have stale PATH).
 ```
 
+Processes & ports — listing, stopping, and finding what's listening:
+
+```powershell
+# PowerShell — list and inspect processes
+Get-Process                          # every running process
+Get-Process -Name node                # filter by name
+# Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName
+# -------  ------    -----      -----     ------     --  -- -----------
+#     150      20   45000      52000       3.14    9124   1 node
+
+Stop-Process -Id 9124                 # kill by PID
+Stop-Process -Name node -Force        # kill by name (Force = don't prompt)
+
+# Find what's listening on a port:
+Get-NetTCPConnection -LocalPort 3000 -State Listen
+# LocalAddress LocalPort ...  OwningProcess
+# 0.0.0.0      3000      ...  9124
+(Get-NetTCPConnection -LocalPort 3000).OwningProcess | Get-Process   # jump to the process
+
+netstat -ano | findstr :3000          # older, universal: PID is the last column
+# TCP    0.0.0.0:3000    0.0.0.0:0    LISTENING    9124
+```
+
+```bash
+# Bash — list and inspect processes
+ps aux                                # every running process
+ps aux | grep node                    # filter by name
+
+kill 9124                             # ask nicely (SIGTERM) by PID
+kill -9 9124                          # force (SIGKILL) — last resort
+
+# Find what's listening on a port:
+lsof -i :3000                         # Unix/macOS/WSL: PID, command, user, all at once
+# COMMAND   PID  USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
+# node     9124  atoop  ...  TCP   *:3000 (LISTEN)
+
+netstat -tulpn | grep :3000           # Linux alternative if lsof isn't installed
+```
+
+The full walkthrough — "port 3000 is taken":
+
+```powershell
+# 1. Start the dev server — it fails:
+npm run dev
+# Error: listen EADDRINUSE: address already in use :::3000
+
+# 2. Find who's squatting on the port:
+Get-NetTCPConnection -LocalPort 3000 -State Listen | Select-Object OwningProcess
+# OwningProcess
+# -------------
+#          9124
+
+# 3. Confirm it's what you think before killing it:
+Get-Process -Id 9124
+# Id     ProcessName
+# --     -----------
+# 9124   node
+
+# 4. Kill it, then restart:
+Stop-Process -Id 9124
+npm run dev
+# Server started on port 3000
+```
+
+```bash
+# 1. Start the dev server — it fails:
+npm run dev
+# Error: listen EADDRINUSE: address already in use :::3000
+
+# 2 & 3. Find and confirm who's squatting on the port:
+lsof -i :3000
+# COMMAND   PID  USER   ...  NAME
+# node     9124  atoop  ...  *:3000 (LISTEN)
+
+# 4. Kill it, then restart:
+kill 9124
+npm run dev
+# Server started on port 3000
+```
+
 ## Common Pitfalls
 
 **Pitfall: "I installed it, but it's still not recognized."**
@@ -173,6 +257,10 @@ A typo in your profile makes every new terminal print red errors on startup.
 Session variables are per-process copies; other terminals and future sessions never see them.
 *Correction*: know your three scopes. Session experiments: `$env:` / `export`. Keep forever: profile file or `[Environment]::SetEnvironmentVariable(..., "User")`.
 
+**Pitfall: killing the wrong PID (or needing elevation).**
+PIDs are reused constantly — a PID from a tutorial screenshot, or from a command you ran five minutes ago, means nothing now; killing the wrong one can close your editor or an unrelated service. On Windows, some listening processes refuse `Stop-Process` without an elevated/admin terminal; on Linux, `kill` on another user's process needs `sudo`.
+*Correction*: always look up the PID freshly with `Get-NetTCPConnection`/`lsof -i` immediately before killing — never reuse an old one. Sanity-check the process name (`Get-Process -Id`/`ps -p`) first. If the kill is refused, re-open the terminal as Administrator (Windows) or prefix with `sudo` (Linux) — but double-check the target before you do, since elevated kills have no undo.
+
 ## Practice Exercises
 
 1. Print your PATH one directory per line in PowerShell. For each of the first five entries, note one executable that lives there (list the directory's `.exe` files). Then use `Get-Command` on three tools you use (e.g., `git`, `node`, `python`) and match each back to its PATH entry.
@@ -180,3 +268,5 @@ Session variables are per-process copies; other terminals and future sessions ne
 3. Create your PowerShell profile if it doesn't exist. Add: one alias, one function that takes you to `D:\atoop\coding-projects`, and one function `ll` that lists files including hidden ones. Reload and test all three. Then do the Bash equivalents in `~/.bashrc` (Git Bash or WSL).
 4. Simulate the classic failure: in one terminal, temporarily prepend a nonsense directory to your session PATH and confirm commands still work (why?). Then *replace* PATH entirely with just that nonsense directory and observe what breaks. Close the terminal, reopen, confirm everything is healed, and write two sentences explaining why no permanent harm occurred.
 5. Create a folder `D:\tools\bin`, put a tiny script in it (a `.cmd` file containing `@echo hello from my tool` is enough), add that folder to your session PATH, and run your "tool" by bare name from a different directory. Bonus: make it permanent with the User-scope setter, open a new terminal, and verify.
+6. Start a dev server on port 3000 (any framework, or `py -m http.server 3000` / `npx serve -l 3000`). From a second terminal: list the process by name, find its PID via the port, and confirm the two match. Do it once with `Get-NetTCPConnection`/`Get-Process` and once with `netstat -ano`/`findstr` in PowerShell; once with `lsof`/`ps` in Bash (WSL or Git Bash).
+7. Deliberately trigger "address already in use": start the same dev server twice in two terminals without stopping the first. Read the error, find the PID occupying the port, kill only that process, and successfully start the second instance. Write down the exact sequence of commands you ran.

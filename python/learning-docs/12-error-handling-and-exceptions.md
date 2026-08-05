@@ -56,6 +56,8 @@ Callers can then catch *your* specific error without accidentally swallowing unr
 
 **EAFP vs LBYL** — two styles: *Look Before You Leap* (`if path.exists(): open(...)`) vs. *Easier to Ask Forgiveness than Permission* (`try: open(...) except FileNotFoundError:`). Python culture favors **EAFP**: it avoids race conditions (the file could vanish between the check and the open) and handles all failure modes in one place.
 
+**Logging vs. `print`** — `print()` is fine for a script you run and read yourself, but it doesn't survive contact with production: it can't be turned off without editing code, carries no severity or timestamp, and vanishes once nobody's watching the terminal (a server's stdout is often discarded or hard to find). The standard-library `logging` module fixes this. Configure it once, near the top of your entry-point script, with `logging.basicConfig(level=logging.INFO)`, then get a named logger per module with `logger = logging.getLogger(__name__)`. Log at a **level** that says how serious the message is — from least to most severe: `DEBUG` (verbose, dev-only detail), `INFO` (normal milestones — "server started", "user created"), `WARNING` (unexpected but recoverable), `ERROR` (something failed), `CRITICAL` (the app itself is in trouble). `basicConfig(level=...)` sets the *minimum* level that actually gets shown — set it to `WARNING` in production and you stop seeing `DEBUG`/`INFO` noise without touching a single log call. Use `logger.exception(...)` inside an `except` block to log an error *with* its traceback in one line.
+
 **The golden rules of catching:**
 
 1. Catch the **most specific** exception you can — `except ValueError:`, not `except Exception:`.
@@ -176,6 +178,37 @@ for attempt in (30, 500, -3):
         print(f"Bad request: {e}")
 ```
 
+### Logging instead of print
+
+```python
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+def load_settings(path):
+    try:
+        f = open(path, encoding="utf-8")
+    except FileNotFoundError:
+        logger.warning("No settings file at %s — using defaults", path)
+        return []
+    with f:
+        logger.info("Loaded settings from %s", path)
+        return [line.strip() for line in f if line.strip()]
+
+def risky_step(n):
+    try:
+        return 100 / n
+    except ZeroDivisionError:
+        logger.exception("risky_step failed for n=%r")   # logs message + full traceback
+        raise
+```
+
+Note `"...%s", path` rather than an f-string: logging only builds the final message if that level is actually enabled, so passing arguments separately avoids paying for string formatting on filtered-out `DEBUG`/`INFO` calls.
+
 ### Reading the traceback — a worked example
 
 ```
@@ -240,6 +273,8 @@ except FileNotFoundError as e:
 **6. `finally` overriding returns** — a `return` inside `finally` silently discards both the `try`'s return value *and* any in-flight exception. Don't return from `finally`.
 
 **7. Validating with the wrong tool** — `.isdigit()` fails for `"-5"` and `"3.14"`; `try: float(raw)` is the robust check. EAFP wins for parsing.
+
+**8. Leaving `print()` debugging in place, or forgetting `basicConfig`** — `print()` calls scattered through real modules can't be turned down; deleting them loses the information for next time. And a script that calls `logging.getLogger(__name__).info(...)` without ever calling `logging.basicConfig(...)` produces no visible output at all (or, before Python 3.2, a "No handlers could be found" warning) — `basicConfig` is what actually attaches a handler, so call it once, early, in your entry-point script (not in every module).
 
 ## Practice Exercises
 

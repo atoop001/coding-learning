@@ -65,6 +65,8 @@ Three fields, ~20 lines, and it still misses things (extra unknown fields pass s
 npm install zod
 ```
 
+**Version note:** the examples in this chapter (and Chapter 10) use zod's chained style — `z.string().email()`, `z.string().url()`. Current zod versions (v4+) prefer top-level functions instead — `z.email()`, `z.url()` — which validate the same thing with a slightly different call shape. Both styles work; the chained form is not deprecated, just no longer the documented default. Check `npm ls zod` and the docs for whichever major version you have installed before assuming either style is wrong.
+
 ```js
 import { z } from 'zod';
 

@@ -41,7 +41,7 @@ All of them:
 - [ ] Contact form: labels, fieldsets/legends, `autocomplete` attributes, error/hint text linked via `aria-describedby`, errors marked beyond color, keyboard-completable end to end
 - [ ] Motion respectful: `prefers-reduced-motion` block; no infinite decorative loops outside loading states
 - [ ] Zoom test: 200% text zoom and 320px width both fully usable
-- [ ] Lighthouse Accessibility = 100 on every page **plus** a written note (comment or short `NOTES.md`) of three issues you found manually that the tool couldn't
+- [ ] Lighthouse Accessibility ≥ 95 on every page **plus** a written note (comment or short `NOTES.md`) of three issues you found manually that the tool couldn't — per Chapter 14's pitfall on trusting the automated scan, a 100 is not the goal; the manual audit notes are what actually prove the page is accessible
 
 ### Content & layout requirements
 - [ ] Data page: at least one real accessible table (`caption`, `scope`d `<th>`s) that handles narrow screens via a scroll wrapper — plus meaningful use of `ul`/`ol`/`dl`

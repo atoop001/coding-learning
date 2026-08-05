@@ -54,6 +54,7 @@ Faster is fine; skipping hands-on sections is not. The commands and DevTools ses
 
 ## Ground rules for getting the most out of it
 
+- **A note on the free services this track leans on.** Chapters and projects repeatedly reach for `httpbin.org`, `badssl.com`, and the unauthenticated GitHub API because they're free, no-signup, and purpose-built for exactly this kind of poking. They occasionally go down or rate-limit you anyway — that's normal for free infrastructure, not a sign anything in the track is broken. If one is unavailable: for httpbin-style request/response echoing, any similar public echo service works as a substitute; for GitHub's rate limit, just wait out the hour (`x-ratelimit-reset` tells you exactly when). The specific host is never the point — the *method* (read the error, check status codes, try curl to isolate browser-vs-network, look for a fallback) is the actual lesson, and it's the same method you'd use on any real API that hiccups.
 - Type every command yourself; don't paste without predicting the output first.
 - Keep a running lab notebook (a markdown file) of commands, outputs, and surprises — Projects 1–5 all get easier if you do.
 - When anything web-related breaks in your other tracks, come back here and ask: *which step of the journey failed?* That habit is the entire point.

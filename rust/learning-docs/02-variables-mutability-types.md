@@ -193,6 +193,11 @@ fn main() {
 - **`as` truncates silently.** `let small = 1000_i32 as u8;` compiles and yields `232`. For safety use `u8::try_from(1000)` which returns a `Result` you must handle (Chapter 9).
 - **Confusing `char` and `&str`.** `'a'` is a char; `"a"` is a string. `"a" == 'a'` is a type error. Python has no char type, so this trips people.
 - **Shadowing a `mut` when you meant to assign.** `let mut x = 1; let x = 2;` — the second line creates a *new immutable* `x`. If you then try `x = 3`, you'll get the E0384 error and wonder where your `mut` went.
+- **Reaching for `println!` to inspect a value, then deleting it.** Use `dbg!` instead — it prints the file/line, the expression source, and the value (via `Debug`), *and* returns the value so you can leave it inline without restructuring code:
+
+  ```rust
+  let doubled = dbg!(x * 2); // prints `[src\main.rs:3:14] x * 2 = 12` to stderr, still returns 12
+  ```
 
 ## Practice Exercises
 

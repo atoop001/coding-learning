@@ -21,6 +21,7 @@ The capstone integrates everything in the track. Take one real project you care 
 - [ ] External dependencies (APIs, clock, randomness) isolated behind injected seams and covered with appropriate doubles
 - [ ] Meaningful coverage (aim ~80%+ on core modules) with a written note on what the uncovered code is and why it's acceptable
 - [ ] Whole suite runs with one command per language and is fast enough to run often (state the number)
+- [ ] A GitHub Actions workflow runs the full test suite on every push — a red build stops the story here; treat it like a failing test, not a formality
 
 **Debugging & robustness (Chapters 7–9)**
 - [ ] Structured logging added (levels, values in messages, `log.exception` in catch blocks); a `LOGGING.md` note on what runs at INFO vs DEBUG
@@ -47,10 +48,11 @@ The capstone integrates everything in the track. Take one real project you care 
 - Let testability and security reinforce each other — the seams you add for doubles (Chapter 3) are the same seams that let you inject a hardened dependency; the input validation you add for security is the same code your error-path tests exercise.
 - Right-size the effort (Chapter 5's over-mocking / Chapter 10's paranoia warnings both apply): this is a real project made solid, not a NASA rewrite. Aim for "another developer would trust this," not "provably perfect."
 - Use the todo list / your progress file to track the four workstreams; the capstone is as much a project-management exercise as a technical one.
+- A CI workflow file has three parts: a **trigger** (`on: push` — when does this run), a **job** running on a fresh VM (`runs-on: ubuntu-latest` — what environment), and **steps** in order (checkout the code, install dependencies, run the suite). If any step exits non-zero, the whole run is marked failed — that's your red build.
 
 ## Stretch goals
 
-- Add a CI configuration (e.g., a GitHub Actions workflow) that runs the full suite and `audit` on every push — professional projects gate merges on green.
+- Add `audit`/`pip-audit` to the same CI workflow so dependency vulnerabilities also fail the build, not just test failures.
 - Add coverage gating and a status badge to the README.
 - Write a `CONTRIBUTING.md` describing your testing and security expectations for contributors — teaching the standard is the deepest form of learning it.
 - Present the before/after to someone (or record a short walkthrough): explaining the transformation out loud is the final rubber-duck that reveals whatever you still don't fully understand.

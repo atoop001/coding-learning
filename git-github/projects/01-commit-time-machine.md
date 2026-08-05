@@ -6,7 +6,7 @@ Build a small commit history *deliberately* — then navigate it, read it, and u
 
 The point is to make history and undo *boring* — you should end this project having reset --hard and recovered so many times that neither impresses you anymore.
 
-## Difficulty
+## Difficulty & Estimated Effort
 
 **Easiest (1/5).** Estimated effort: 2–3 hours. Can be split across two sessions (build + navigate, then undo drills).
 

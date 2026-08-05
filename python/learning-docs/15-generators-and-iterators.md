@@ -54,7 +54,9 @@ for ch in letters:
 ### Your first generator function
 
 ```python
-def countdown(n):
+from typing import Iterator
+
+def countdown(n: int) -> Iterator[int]:
     """Yield n, n-1, ..., 1."""
     print("(starting)")             # runs on FIRST next(), not on call!
     while n > 0:
@@ -89,8 +91,9 @@ print(sum(as_gen))                  # totals fine without ever storing the squar
 
 ```python
 import itertools
+from typing import Iterator
 
-def fibonacci():
+def fibonacci() -> Iterator[int]:
     """Yield Fibonacci numbers forever."""
     a, b = 0, 1
     while True:                     # infinite is FINE — values come only when pulled
@@ -111,7 +114,9 @@ for f in fibonacci():
 ### A realistic pipeline: log processing
 
 ```python
-def read_lines(path):
+from typing import Iterator
+
+def read_lines(path: str) -> Iterator[str]:
     """Yield stripped, non-empty lines — one at a time, any file size."""
     with open(path, encoding="utf-8") as f:
         for line in f:

@@ -6,6 +6,8 @@ You've been *using* objects all along: strings, lists, dicts, file handles, `Pat
 
 OOP is the organizing principle of most large Python codebases and frameworks — Flask views, Django models, pytest fixtures, exceptions (you subclassed `Exception` last chapter!). This chapter covers classes, instances, `__init__`, methods, attributes, inheritance, and the "dunder" methods that plug your classes into Python's syntax.
 
+**Hints in practice** — Chapter 6 mentioned type hints as a preview; from here on, the track's own examples start wearing them on their main signatures (`self` stays unhinted — its type is always the class). They cost nothing at runtime and pay off fast on methods with several parameters.
+
 ## Definitions & Explanations
 
 **Class** — a blueprint defining what data (attributes) and behavior (methods) a kind of object has. Defined with `class Name:` — names use `CapWords` by convention.
@@ -55,15 +57,15 @@ You never call these directly; you implement them and Python's syntax invokes th
 class Player:
     """A player in a game."""
 
-    def __init__(self, name, score=0):
+    def __init__(self, name: str, score: int = 0):
         self.name = name              # instance attributes: this player's own data
         self.score = score
 
-    def add_points(self, points):
+    def add_points(self, points: int) -> None:
         """Increase this player's score."""
         self.score += points
 
-    def describe(self):
+    def describe(self) -> str:
         return f"{self.name} has {self.score} points"
 
 
@@ -98,21 +100,21 @@ print(Circle.PI)            # accessible on the class itself
 
 ```python
 class BankAccount:
-    def __init__(self, owner, balance=0.0):
+    def __init__(self, owner: str, balance: float = 0.0):
         self.owner = owner
         self._balance = float(balance)      # _ = "internal, use the methods"
 
     @property
-    def balance(self):
+    def balance(self) -> float:
         """Read-only view of the balance."""
         return self._balance
 
-    def deposit(self, amount):
+    def deposit(self, amount: float) -> None:
         if amount <= 0:
             raise ValueError("deposit must be positive")
         self._balance += amount
 
-    def withdraw(self, amount):
+    def withdraw(self, amount: float) -> None:
         if amount <= 0:
             raise ValueError("withdrawal must be positive")
         if amount > self._balance:

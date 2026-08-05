@@ -21,6 +21,10 @@ You already have a decision ladder; libraries extend it, not replace it:
 
 Interview-ready summary: *"Local first, server state in a query cache, URL for shareable state, and a small store like Zustand only for real cross-cutting client state."*
 
+### Form libraries
+
+The controlled-input pattern from Chapter 5 (state + `onChange` + a hand-rolled `errors`/`touched` object) works great at the scale you've been building. Past roughly five fields, cross-field validation, conditional fields, or nested arrays, most teams reach for **React Hook Form** instead: it manages field state internally via uncontrolled refs (far fewer re-renders per keystroke) while still exposing a simple `register()`/`handleSubmit()` API, and it's almost always paired with **Zod** for schema-based validation — one schema defines the rules *and* infers the TypeScript type (`z.infer<typeof schema>`), so the shape can't drift from the validation. Recognition level for this track: know the two names, know why teams reach for them (less boilerplate than what you wrote by hand in Chapter 5), and know they compose (`zodResolver` wires a Zod schema into React Hook Form) — not mastery.
+
 ### Frameworks and server rendering, conceptually
 
 Your Vite SPA renders entirely in the browser: the server sends an empty HTML shell + JS. Trade-offs: simple hosting, great for apps behind login; but slower first paint and weak SEO for content sites. Frameworks address this:

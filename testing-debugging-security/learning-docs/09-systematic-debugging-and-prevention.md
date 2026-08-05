@@ -27,6 +27,8 @@ Good log lines answer *who/what/with which values/what happened*: `WARNING order
 
 **`git bisect`** — binary search over your commit history: mark a known-good old commit and the bad current one; git checks out midpoints and you answer good/bad until it names the exact commit that introduced the regression. With a test script, `git bisect run` automates the whole hunt.
 
+**Reviewing code you didn't write** — the other half of prevention: most bugs that never happen are caught in review, before they reach main. A reviewer works in a fixed priority order: **correctness first** (does it do what it claims, is there a bug), then **clarity** (would a stranger — future you included — understand this in six months without asking), then **tests** (do they cover the new behavior, including the edge cases from Chapter 4), then style last, and often not worth blocking on at all. Separate every comment into **blocking** (must be addressed before merge — "this raises on an empty list, and that's a real input here") versus **nit** (optional polish, labeled as such so the author isn't guessing — "nit: `x` → `remaining_budget` would read clearer"). The difference between a useless review comment and a useful one is specificity: name the line, state what's wrong, and either suggest a fix or ask a pointed question. "This looks off" teaches nothing; "this doesn't handle `qty <= 0` — should it raise or clamp to zero?" does.
+
 ## Code Examples
 
 ### The regression workflow, in full
@@ -153,6 +155,36 @@ def apply_payments(ledger, payments):
 
 Note the split: impossible-by-design conditions → `assert`; expected-bad input → `raise`. Both are tested like any error path (Chapter 4).
 
+### A diff to review — find the seeded problems before reading on
+
+This is a real pull request diff, added to signup.py and its test file. Read it the way a reviewer would, in priority order, before checking the practice exercise below.
+
+```diff
+--- a/signup.py
++++ b/signup.py
+@@ -0,0 +1,5 @@
++MIN_SIGNUP_AGE = 18
++
++def validate_age(age):
++    """Check whether a user meets the minimum signup age."""
++    return age > MIN_SIGNUP_AGE
+```
+
+```diff
+--- a/test_signup.py
++++ b/test_signup.py
+@@ -0,0 +1,6 @@
++from signup import validate_age
++
++def test_adult_can_register():
++    assert validate_age(25) is True
++
++def test_child_cannot_register():
++    assert validate_age(10) is False
+```
+
+This diff has three seeded problems typical of real reviews: a logic bug, a name that promises the wrong thing, and a missing edge case — see Practice Exercise 6.
+
 ## Common Pitfalls
 
 - **Fixing the bug without writing the test.** Three months later, a refactor reintroduces it and nothing notices. Correction: failing test first, fix second — no exceptions, even for "trivial" bugs (especially for those: they recur the most).
@@ -170,3 +202,4 @@ Note the split: impossible-by-design conditions → `assert`; expected-bad input
 3. Retrofit logging into one of your Flask or Node apps: startup INFO line, one INFO per meaningful user action with identifiers, WARNING on retryable failures, `log.exception` in every catch. Then break something on purpose and diagnose it *using only the log file* — no debugger, no prints.
 4. Add three assertions to an existing project: one precondition, one invariant, one postcondition. For each, write the comment explaining *what programmer mistake* it would catch. Then write one input-validation check and justify why it's `raise` rather than `assert`.
 5. Create a small git repo, make 12 commits to a function where commit ~7 quietly introduces a bug, then use `git bisect` (with a test script if you can) to find the guilty commit. Note how many steps it took versus checking all 12.
+6. Review the `signup.py` diff above. It has (at least) three problems: a logic bug, a misleadingly-named function, and a test suite missing the one input most likely to expose the bug. Write the actual review comments you'd leave — one per problem. For each: mark it **blocking** or **nit**, name the specific line, state what's wrong, and phrase it actionably per this chapter's guidance. Finish with an approve/request-changes decision and one sentence justifying it.

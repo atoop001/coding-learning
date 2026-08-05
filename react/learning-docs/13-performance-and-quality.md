@@ -43,6 +43,8 @@ Testing Library's philosophy: *test behavior, not implementation*. Query by **ro
 
 Query cheat sheet: `getBy*` (must exist, throws otherwise) / `queryBy*` (may be absent — use for "not rendered" assertions) / `findBy*` (async — waits, for post-fetch UI).
 
+(Chapter 5 has an "Accessibility basics" section covering the semantic-HTML, labeling, and keyboard practices that make components queryable by role in the first place — worth a re-read if `getByRole` keeps failing to find things.)
+
 ## Code Examples
 
 ### Structure first: fixing re-renders without memo

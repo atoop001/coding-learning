@@ -48,6 +48,7 @@ Build a route-planning engine for a transit-style network: load a map of station
 - Engineering the divergent pair: give a direct edge a big weight (express line closed for repairs: 1 stop, 30 min) and a multi-hop alternative small weights (4 stops, 12 min).
 - Maze neighbors: from `(r, c)` yield the ≤ 4 in-bounds, non-wall cells. Keep coordinates as tuples — they're hashable, so your visited set and parent map work unchanged.
 - `critical_stations`: count components, then for each station, count components of the graph *without it* (skip it in traversals rather than mutating the graph). Compare counts among nodes of the same original component.
+- Chapter 11's Union-Find section describes a more efficient tool for connectivity bookkeeping than brute-force re-traversal — worth attempting `critical_stations` that way as a stretch, once the brute-force version passes.
 
 ## Stretch goals
 
